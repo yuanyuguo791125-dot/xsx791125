@@ -8,38 +8,47 @@ import { Star, ShoppingCart, Heart, Share2, Shield, Truck, Package } from 'lucid
 // @ts-ignore;
 import { LazyImage } from '@/components/LazyImage';
 // @ts-ignore;
-import { ImageGallery } from '@/components/ImageGallery';
-// @ts-ignore;
-import { ActionBar } from '@/components/ActionBar';
-const ProductInfo = memo(({
-  product
+import { SkeletonLoader } from '@/components/SkeletonLoader';
+const ImageGallery = memo(({
+  images,
+  selectedIndex,
+  onSelect
 }) => {
   return <div className="space-y-4">
-      <h1 className="text-2xl font-bold">{product.name}</h1>
-      <div className="flex items-center gap-2">
-        <div className="flex items-center">
-          {[...Array(5)].map((_, i) => <Star key={i} className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />)}
-        </div>
-        <span className="text-sm text-gray-600">{product.rating} ({product.reviewCount}条评价)</span>
+      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+        <LazyImage src={images[selectedIndex]} alt="商品图片" className="w-full h-full object-cover" />
       </div>
-      
-      <div className="bg-red-50 p-4 rounded-lg">
-        <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-red-600">¥{product.price}</span>
-          <span className="text-sm text-gray-500 line-through">¥{product.originalPrice}</span>
-          <Badge variant="destructive">{product.discount}折</Badge>
-        </div>
+      <div className="flex gap-2 overflow-x-auto">
+        {images.map((image, index) => <div key={index} className={`w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer ${index === selectedIndex ? 'ring-2 ring-blue-500' : ''}`} onClick={() => onSelect(index)}>
+            <LazyImage src={image} alt={`缩略图 ${index + 1}`} className="w-full h-full object-cover" />
+          </div>)}
       </div>
-      
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 text-sm">
-          <Shield className="w-4 h-4 text-green-600" />
-          <span>正品保障</span>
+    </div>;
+});
+const ActionBar = memo(({
+  quantity,
+  onQuantityChange,
+  onAddToCart,
+  onBuyNow
+}) => {
+  return <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t">
+      <div className="flex gap-4">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => onQuantityChange(Math.max(1, quantity - 1))}>
+            -
+          </Button>
+          <span className="w-8 text-center">{quantity}</span>
+          <Button variant="outline" size="sm" onClick={() => onQuantityChange(quantity + 1)}>
+            +
+          </Button>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Truck className="w-4 h-4 text-blue-600" />
-          <span>全场包邮</span>
-        </div>
+        <Button className="flex-1" onClick={onAddToCart}>
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          加入购物车
+        </Button>
+        <Button variant="destructive" className="flex-1" onClick={onBuyNow}>
+          立即购买
+        </Button>
       </div>
     </div>;
 });
@@ -145,7 +154,38 @@ export default function ProductDetail(props) {
         <ImageGallery images={product.images || [product.image]} selectedIndex={selectedImage} onSelect={setSelectedImage} />
         
         <div className="p-4">
-          <ProductInfo product={product} />
+          <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center">
+              {[...Array(5)].map((_, i) => <Star key={i} className={`w-4 h-4 ${i < Math.floor(product.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />)}
+            </div>
+            <span className="text-sm text-gray-600">{product.rating || 0} ({product.reviewCount || 0}条评价)</span>
+          </div>
+          
+          <div className="bg-red-50 p-4 rounded-lg mb-4">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-red-600">¥{product.price}</span>
+              {product.originalPrice && <span className="text-sm text-gray-500 line-through">¥{product.originalPrice}</span>}
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-1">
+                <Shield className="w-4 h-4 text-green-600" />
+                <span>正品保障</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Truck className="w-4 h-4 text-blue-600" />
+                <span>全场包邮</span>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-2">商品详情</h3>
+              <p className="text-sm text-gray-600">{product.description}</p>
+            </div>
+          </div>
         </div>
       </div>
       
