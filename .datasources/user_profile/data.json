@@ -1,0 +1,85 @@
+
+[
+  {
+    "_id": "user_001",
+    "user_id": "user_001",
+    "nickname": "小明同学",
+    "avatar_url": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=face",
+    "phone": "138****8888",
+    "email": "xiaoming@example.com",
+    "level": "黄金会员",
+    "points": 1280,
+    "total_points": 2560,
+    "favorites_count": 12,
+    "history_count": 45,
+    "registration_date": 1725484800000,
+    "last_login": 1725571200000,
+    "is_vip": true,
+    "vip_expire_date": 1735689600000,
+    "address_count": 3,
+    "order_stats": {
+      "pending": 2,
+      "shipping": 1,
+      "received": 3,
+      "review": 5,
+      "total": 11
+    },
+    "createdAt": 1725484800000,
+    "updatedAt": 1725571200000
+  },
+  {
+    "_id": "user_002",
+    "user_id": "user_002",
+    "nickname": "学习达人",
+    "avatar_url": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face",
+    "phone": "139****9999",
+    "email": "study@example.com",
+    "level": "钻石会员",
+    "points": 3560,
+    "total_points": 7120,
+    "favorites_count": 28,
+    "history_count": 89,
+    "registration_date": 1725398400000,
+    "last_login": 1725633600000,
+    "is_vip": true,
+    "vip_expire_date": 1743465600000,
+    "address_count": 5,
+    "order_stats": {
+      "pending": 0,
+      "shipping": 2,
+      "received": 8,
+      "review": 12,
+      "total": 22
+    },
+    "createdAt": 1725398400000,
+    "updatedAt": 1725633600000
+  },
+  {
+    "_id": "user_003",
+    "user_id": "user_003",
+    "nickname": "新手用户",
+    "avatar_url": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&h=200&fit=crop&crop=face",
+    "phone": "137****7777",
+    "email": "newbie@example.com",
+    "level": "普通会员",
+    "points": 120,
+    "total_points": 120,
+    "favorites_count": 3,
+    "history_count": 12,
+    "registration_date": 1725561600000,
+    "last_login": 1725648000000,
+    "is_vip": false,
+    "vip_expire_date": null,
+    "address_count": 1,
+    "order_stats": {
+      "pending": 1,
+      "shipping": 0,
+      "received": 1,
+      "review": 0,
+      "total": 2
+    },
+    "createdAt": 1725561600000,
+    "updatedAt": 1725648000000
+  }
+]
+  

@@ -1,0 +1,85 @@
+
+{
+  "name": "group_activity",
+  "title": "拼团活动",
+  "schemas": [
+    {
+      "name": "product_id",
+      "title": "商品ID",
+      "type": "String"
+    },
+    {
+      "name": "product_name",
+      "title": "商品名称",
+      "type": "String"
+    },
+    {
+      "name": "product_image",
+      "title": "商品图片",
+      "type": "Image"
+    },
+    {
+      "name": "category",
+      "title": "商品分类",
+      "type": "String"
+    },
+    {
+      "name": "group_price",
+      "title": "拼团价",
+      "type": "Number"
+    },
+    {
+      "name": "original_price",
+      "title": "原价",
+      "type": "Number"
+    },
+    {
+      "name": "joined_count",
+      "title": "已参团人数",
+      "type": "Number"
+    },
+    {
+      "name": "required_count",
+      "title": "所需人数",
+      "type": "Number"
+    },
+    {
+      "name": "group_status",
+      "title": "拼团状态",
+      "type": "String"
+    },
+    {
+      "name": "start_time",
+      "title": "开始时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "end_time",
+      "title": "结束时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "creator_id",
+      "title": "拼团创建者ID",
+      "type": "String"
+    },
+    {
+      "name": "creator_name",
+      "title": "创建者昵称",
+      "type": "String"
+    },
+    {
+      "name": "is_hot",
+      "title": "是否热门",
+      "type": "Boolean"
+    },
+    {
+      "name": "description",
+      "title": "商品描述",
+      "type": "String"
+    }
+  ]
+}
+  

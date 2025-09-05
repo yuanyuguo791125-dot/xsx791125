@@ -1,0 +1,32 @@
+
+{
+  "name": "product_inventory",
+  "title": "商品库存",
+  "schemas": [
+    {
+      "name": "product_id",
+      "title": "商品ID",
+      "type": "String"
+    },
+    {
+      "name": "sku_id",
+      "title": "SKU ID",
+      "type": "String"
+    },
+    {
+      "name": "stock_quantity",
+      "title": "库存数量",
+      "type": "Number"
+    },
+    {
+      "name": "reserved_quantity",
+      "title": "预留数量",
+      "type": "Number"
+    },
+    {
+      "name": "updated_at",
+      "title": "更新时间",
+      "type": "DateTime"
+    }
+  ]
+}

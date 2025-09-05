@@ -1,0 +1,172 @@
+
+{
+  "name": "product_detail",
+  "title": "商品详情",
+  "schemas": [
+    {
+      "name": "product_id",
+      "title": "商品ID",
+      "type": "String"
+    },
+    {
+      "name": "name",
+      "title": "商品名称",
+      "type": "String"
+    },
+    {
+      "name": "subtitle",
+      "title": "商品副标题",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "title": "商品描述",
+      "type": "String"
+    },
+    {
+      "name": "price",
+      "title": "当前价格",
+      "type": "Number"
+    },
+    {
+      "name": "original_price",
+      "title": "原价",
+      "type": "Number"
+    },
+    {
+      "name": "main_image",
+      "title": "商品主图",
+      "type": "Image"
+    },
+    {
+      "name": "images",
+      "title": "商品轮播图",
+      "type": "Array",
+      "items": {
+        "type": "Image"
+      }
+    },
+    {
+      "name": "detail_images",
+      "title": "商品详情图",
+      "type": "Array",
+      "items": {
+        "type": "Image"
+      }
+    },
+    {
+      "name": "stock",
+      "title": "库存数量",
+      "type": "Number"
+    },
+    {
+      "name": "sales",
+      "title": "销量",
+      "type": "Number"
+    },
+    {
+      "name": "category_id",
+      "title": "分类ID",
+      "type": "String"
+    },
+    {
+      "name": "category_name",
+      "title": "分类名称",
+      "type": "String"
+    },
+    {
+      "name": "brand",
+      "title": "品牌",
+      "type": "String"
+    },
+    {
+      "name": "weight",
+      "title": "重量(kg)",
+      "type": "Number"
+    },
+    {
+      "name": "dimensions",
+      "title": "尺寸",
+      "type": "String"
+    },
+    {
+      "name": "material",
+      "title": "材质",
+      "type": "String"
+    },
+    {
+      "name": "is_free_shipping",
+      "title": "是否包邮",
+      "type": "Boolean"
+    },
+    {
+      "name": "shipping_fee",
+      "title": "运费",
+      "type": "Number"
+    },
+    {
+      "name": "rating",
+      "title": "评分",
+      "type": "Number"
+    },
+    {
+      "name": "review_count",
+      "title": "评价数量",
+      "type": "Number"
+    },
+    {
+      "name": "tags",
+      "title": "商品标签",
+      "type": "Array",
+      "items": {
+        "type": "String"
+      }
+    },
+    {
+      "name": "specifications",
+      "title": "商品规格",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "sku_list",
+      "title": "SKU列表",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "attributes",
+      "title": "商品属性",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "details_html",
+      "title": "详情HTML",
+      "type": "RichText"
+    },
+    {
+      "name": "service_guarantees",
+      "title": "服务保障",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "related_products",
+      "title": "关联商品",
+      "type": "Array",
+      "items": {
+        "type": "String"
+      }
+    }
+  ]
+}
+  

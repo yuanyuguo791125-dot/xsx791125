@@ -1,0 +1,35 @@
+
+[
+  {
+    "_id": "inv_001",
+    "product_id": "prod_001",
+    "sku_id": "sku_001",
+    "stock_quantity": 100,
+    "reserved_quantity": 5,
+    "updated_at": 1725484800000
+  },
+  {
+    "_id": "inv_002",
+    "product_id": "prod_002",
+    "sku_id": "sku_002",
+    "stock_quantity": 50,
+    "reserved_quantity": 10,
+    "updated_at": 1725484800000
+  },
+  {
+    "_id": "inv_003",
+    "product_id": "prod_003",
+    "sku_id": "sku_003",
+    "stock_quantity": 0,
+    "reserved_quantity": 0,
+    "updated_at": 1725484800000
+  },
+  {
+    "_id": "inv_004",
+    "product_id": "prod_004",
+    "sku_id": "sku_004",
+    "stock_quantity": 200,
+    "reserved_quantity": 20,
+    "updated_at": 1725484800000
+  }
+]

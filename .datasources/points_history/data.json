@@ -1,0 +1,108 @@
+
+[
+  {
+    "_id": "points_001",
+    "user_id": "user_001",
+    "type": "earn",
+    "title": "购物获得积分",
+    "description": "购买小学数学思维训练获得积分",
+    "points": 50,
+    "balance": 1280,
+    "source": "shopping",
+    "order_id": "order_001",
+    "created_at": 1725571200000,
+    "expired_at": 1735689600000
+  },
+  {
+    "_id": "points_002",
+    "user_id": "user_001",
+    "type": "spend",
+    "title": "积分兑换优惠券",
+    "description": "使用积分兑换10元优惠券",
+    "points": 100,
+    "balance": 1230,
+    "source": "exchange",
+    "order_id": null,
+    "created_at": 1725564000000,
+    "expired_at": null
+  },
+  {
+    "_id": "points_003",
+    "user_id": "user_001",
+    "type": "earn",
+    "title": "每日签到",
+    "description": "连续签到7天奖励积分",
+    "points": 20,
+    "balance": 1330,
+    "source": "sign_in",
+    "order_id": null,
+    "created_at": 1725556800000,
+    "expired_at": null
+  },
+  {
+    "_id": "points_004",
+    "user_id": "user_001",
+    "type": "earn",
+    "title": "评价商品",
+    "description": "评价英语单词卡片套装获得积分",
+    "points": 10,
+    "balance": 1310,
+    "source": "review",
+    "order_id": "order_002",
+    "created_at": 1725549600000,
+    "expired_at": null
+  },
+  {
+    "_id": "points_005",
+    "user_id": "user_001",
+    "type": "earn",
+    "title": "分享商品",
+    "description": "分享商品到朋友圈获得积分",
+    "points": 5,
+    "balance": 1300,
+    "source": "share",
+    "order_id": null,
+    "created_at": 1725542400000,
+    "expired_at": null
+  },
+  {
+    "_id": "points_006",
+    "user_id": "user_002",
+    "type": "earn",
+    "title": "购物获得积分",
+    "description": "购买多功能文具盒获得积分",
+    "points": 30,
+    "balance": 3560,
+    "source": "shopping",
+    "order_id": "order_003",
+    "created_at": 1725633600000,
+    "expired_at": 1735689600000
+  },
+  {
+    "_id": "points_007",
+    "user_id": "user_002",
+    "type": "earn",
+    "title": "VIP会员奖励",
+    "description": "钻石会员月度积分奖励",
+    "points": 200,
+    "balance": 3530,
+    "source": "vip_reward",
+    "order_id": null,
+    "created_at": 1725626400000,
+    "expired_at": null
+  },
+  {
+    "_id": "points_008",
+    "user_id": "user_003",
+    "type": "earn",
+    "title": "新用户注册",
+    "description": "新用户注册奖励积分",
+    "points": 100,
+    "balance": 120,
+    "source": "register",
+    "order_id": null,
+    "created_at": 1725561600000,
+    "expired_at": null
+  }
+]
+  

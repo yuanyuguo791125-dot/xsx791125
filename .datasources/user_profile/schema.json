@@ -1,0 +1,91 @@
+
+{
+  "name": "user_profile",
+  "title": "用户信息",
+  "schemas": [
+    {
+      "name": "user_id",
+      "title": "用户ID",
+      "type": "String"
+    },
+    {
+      "name": "nickname",
+      "title": "用户昵称",
+      "type": "String"
+    },
+    {
+      "name": "avatar_url",
+      "title": "头像URL",
+      "type": "Image"
+    },
+    {
+      "name": "phone",
+      "title": "手机号",
+      "type": "String"
+    },
+    {
+      "name": "email",
+      "title": "邮箱",
+      "type": "Email"
+    },
+    {
+      "name": "level",
+      "title": "会员等级",
+      "type": "String"
+    },
+    {
+      "name": "points",
+      "title": "当前积分",
+      "type": "Number"
+    },
+    {
+      "name": "total_points",
+      "title": "累计积分",
+      "type": "Number"
+    },
+    {
+      "name": "favorites_count",
+      "title": "收藏数量",
+      "type": "Number"
+    },
+    {
+      "name": "history_count",
+      "title": "浏览历史数量",
+      "type": "Number"
+    },
+    {
+      "name": "registration_date",
+      "title": "注册时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "last_login",
+      "title": "最后登录时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "is_vip",
+      "title": "是否VIP",
+      "type": "Boolean"
+    },
+    {
+      "name": "vip_expire_date",
+      "title": "VIP到期时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "address_count",
+      "title": "收货地址数量",
+      "type": "Number"
+    },
+    {
+      "name": "order_stats",
+      "title": "订单统计",
+      "type": "Object"
+    }
+  ]
+}
+  

@@ -1,0 +1,60 @@
+
+{
+  "name": "points_history",
+  "title": "积分历史",
+  "schemas": [
+    {
+      "name": "user_id",
+      "title": "用户ID",
+      "type": "String"
+    },
+    {
+      "name": "type",
+      "title": "变动类型",
+      "type": "String"
+    },
+    {
+      "name": "title",
+      "title": "变动标题",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "title": "变动描述",
+      "type": "String"
+    },
+    {
+      "name": "points",
+      "title": "变动积分",
+      "type": "Number"
+    },
+    {
+      "name": "balance",
+      "title": "变动后余额",
+      "type": "Number"
+    },
+    {
+      "name": "source",
+      "title": "积分来源",
+      "type": "String"
+    },
+    {
+      "name": "order_id",
+      "title": "关联订单ID",
+      "type": "String"
+    },
+    {
+      "name": "created_at",
+      "title": "创建时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "expired_at",
+      "title": "过期时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    }
+  ]
+}
+  

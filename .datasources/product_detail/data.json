@@ -1,0 +1,353 @@
+
+[
+  {
+    "_id": "detail_001",
+    "product_id": "prod_001",
+    "name": "小学数学思维训练（三年级适用）",
+    "subtitle": "资深教师编写，100道经典题目，提升数学思维能力",
+    "description": "专为三年级学生设计的数学思维训练，包含100道经典题目，由资深数学教师编写，循序渐进提升孩子的数学思维能力。每道题都配有详细解析，帮助孩子理解解题思路。采用环保纸张印刷，色彩鲜艳，图文并茂，激发孩子学习兴趣。",
+    "price": 24.9,
+    "original_price": 39.9,
+    "main_image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop"
+    ],
+    "stock": 100,
+    "sales": 156,
+    "category_id": "cat_001",
+    "category_name": "小学教辅",
+    "brand": "智慧教育",
+    "weight": 0.3,
+    "dimensions": "26cm × 19cm × 1cm",
+    "material": "环保纸张",
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.8,
+    "review_count": 89,
+    "tags": ["数学思维", "三年级", "经典题目", "详细解析", "环保印刷"],
+    "specifications": [
+      {
+        "name": "年级",
+        "value": "三年级",
+        "type": "select"
+      },
+      {
+        "name": "页数",
+        "value": "120页",
+        "type": "text"
+      },
+      {
+        "name": "出版社",
+        "value": "教育出版社",
+        "type": "text"
+      },
+      {
+        "name": "ISBN",
+        "value": "978-7-123-45678-9",
+        "type": "text"
+      },
+      {
+        "name": "装帧",
+        "value": "平装",
+        "type": "select"
+      }
+    ],
+    "sku_list": [
+      {
+        "sku": "MATH-001-STD",
+        "price": 24.9,
+        "original_price": 39.9,
+        "stock": 50,
+        "specifications": {
+          "年级": "三年级",
+          "装帧": "平装"
+        },
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+      },
+      {
+        "sku": "MATH-001-HD",
+        "price": 29.9,
+        "original_price": 44.9,
+        "stock": 30,
+        "specifications": {
+          "年级": "三年级",
+          "装帧": "精装"
+        },
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+      }
+    ],
+    "attributes": [
+      {
+        "name": "年级",
+        "values": ["三年级", "四年级", "五年级"],
+        "type": "select"
+      },
+      {
+        "name": "装帧",
+        "values": ["平装", "精装"],
+        "type": "select"
+      }
+    ],
+    "details_html": "<div><h3>商品详情</h3><p>这本《小学数学思维训练》专为三年级学生设计，包含100道经典数学思维题目。</p><h4>产品特色：</h4><ul><li>资深教师编写，循序渐进</li><li>每题配有详细解析</li><li>彩色印刷，图文并茂</li><li>环保纸张，保护视力</li></ul><h4>适用对象：</h4><p>适合三年级学生使用，可作为课后练习或思维训练教材。</p></div>",
+    "service_guarantees": [
+      {
+        "icon": "Truck",
+        "text": "全场包邮",
+        "color": "text-green-600"
+      },
+      {
+        "icon": "Shield",
+        "text": "正品保障",
+        "color": "text-blue-600"
+      },
+      {
+        "icon": "Package",
+        "text": "7天无理由退换",
+        "color": "text-purple-600"
+      }
+    ],
+    "related_products": ["prod_002", "prod_004", "prod_005"],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "detail_002",
+    "product_id": "prod_002",
+    "name": "英语单词卡片套装（1-6年级）",
+    "subtitle": "300张精美卡片，图文并茂，防水防撕，轻松记忆单词",
+    "description": "覆盖1-6年级所有英语单词，配有精美插图和发音指导，帮助孩子轻松记忆单词。卡片采用环保材质，防水防撕，可反复使用。每张卡片都有标准发音和例句，让孩子在学习单词的同时掌握正确用法。",
+    "price": 15.9,
+    "original_price": 29.9,
+    "main_image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=1200&fit=crop"
+    ],
+    "stock": 200,
+    "sales": 89,
+    "category_id": "cat_001",
+    "category_name": "小学教辅",
+    "brand": "快乐学习",
+    "weight": 0.5,
+    "dimensions": "15cm × 10cm × 3cm",
+    "material": "环保铜版纸",
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.7,
+    "review_count": 67,
+    "tags": ["英语单词", "卡片记忆", "1-6年级", "防水防撕", "标准发音"],
+    "specifications": [
+      {
+        "name": "年级",
+        "value": "1-6年级",
+        "type": "select"
+      },
+      {
+        "name": "卡片数量",
+        "value": "300张",
+        "type": "text"
+      },
+      {
+        "name": "材质",
+        "value": "环保铜版纸",
+        "type": "text"
+      },
+      {
+        "name": "尺寸",
+        "value": "8cm × 5cm",
+        "type": "text"
+      },
+      {
+        "name": "包装",
+        "value": "盒装",
+        "type": "select"
+      }
+    ],
+    "sku_list": [
+      {
+        "sku": "ENG-001-STD",
+        "price": 15.9,
+        "original_price": 29.9,
+        "stock": 100,
+        "specifications": {
+          "年级": "1-6年级",
+          "包装": "盒装"
+        },
+        "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop"
+      },
+      {
+        "sku": "ENG-001-BAG",
+        "price": 18.9,
+        "original_price": 32.9,
+        "stock": 50,
+        "specifications": {
+          "年级": "1-6年级",
+          "包装": "收纳袋"
+        },
+        "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop"
+      }
+    ],
+    "attributes": [
+      {
+        "name": "年级",
+        "values": ["1-3年级", "4-6年级", "1-6年级"],
+        "type": "select"
+      },
+      {
+        "name": "包装",
+        "values": ["盒装", "收纳袋"],
+        "type": "select"
+      }
+    ],
+    "details_html": "<div><h3>商品详情</h3><p>这套英语单词卡片覆盖1-6年级所有英语单词，是学习英语的好帮手。</p><h4>产品特色：</h4><ul><li>300张精美卡片，图文并茂</li><li>防水防撕，可反复使用</li><li>标准发音，配有例句</li><li>环保材质，安全无毒</li></ul><h4>适用对象：</h4><p>适合1-6年级学生使用，可作为英语学习的辅助工具。</p></div>",
+    "service_guarantees": [
+      {
+        "icon": "Truck",
+        "text": "全场包邮",
+        "color": "text-green-600"
+      },
+      {
+        "icon": "Shield",
+        "text": "正品保障",
+        "color": "text-blue-600"
+      },
+      {
+        "icon": "Package",
+        "text": "7天无理由退换",
+        "color": "text-purple-600"
+      }
+    ],
+    "related_products": ["prod_001", "prod_004", "prod_006"],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "detail_003",
+    "product_id": "prod_003",
+    "name": "多功能文具盒（卡通款）",
+    "subtitle": "三层大容量设计，可爱卡通图案，坚固耐用",
+    "description": "三层大容量设计，可爱卡通图案，适合小学生使用。采用优质塑料材质，坚固耐用，多个隔层设计，方便分类收纳各种文具。防水防尘，易清洁，是孩子学习的好帮手。",
+    "price": 12.9,
+    "original_price": 25.9,
+    "main_image": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=1200&fit=crop"
+    ],
+    "stock": 150,
+    "sales": 234,
+    "category_id": "cat_004",
+    "category_name": "文具用品",
+    "brand": "创意文具",
+    "weight": 0.2,
+    "dimensions": "20cm × 8cm × 4cm",
+    "material": "优质塑料",
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.9,
+    "review_count": 156,
+    "tags": ["大容量", "卡通图案", "三层设计", "坚固耐用", "防水防尘"],
+    "specifications": [
+      {
+        "name": "层数",
+        "value": "三层",
+        "type": "select"
+      },
+      {
+        "name": "材质",
+        "value": "优质塑料",
+        "type": "select"
+      },
+      {
+        "name": "尺寸",
+        "value": "20cm × 8cm × 4cm",
+        "type": "text"
+      },
+      {
+        "name": "图案",
+        "value": "卡通动物",
+        "type": "select"
+      },
+      {
+        "name": "颜色",
+        "value": "蓝色",
+        "type": "select"
+      }
+    ],
+    "sku_list": [
+      {
+        "sku": "BOX-001-BLUE",
+        "price": 12.9,
+        "original_price": 25.9,
+        "stock": 80,
+        "specifications": {
+          "颜色": "蓝色",
+          "图案": "卡通动物"
+        },
+        "image": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop"
+      },
+      {
+        "sku": "BOX-001-PINK",
+        "price": 12.9,
+        "original_price": 25.9,
+        "stock": 70,
+        "specifications": {
+          "颜色": "粉色",
+          "图案": "卡通动物"
+        },
+        "image": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop"
+      }
+    ],
+    "attributes": [
+      {
+        "name": "颜色",
+        "values": ["蓝色", "粉色", "绿色"],
+        "type": "select"
+      },
+      {
+        "name": "图案",
+        "values": ["卡通动物", "卡通人物", "几何图案"],
+        "type": "select"
+      }
+    ],
+    "details_html": "<div><h3>商品详情</h3><p>这款多功能文具盒采用三层大容量设计，是小学生收纳文具的理想选择。</p><h4>产品特色：</h4><ul><li>三层大容量，分类收纳</li><li>卡通图案，可爱有趣</li><li>优质塑料，坚固耐用</li><li>防水防尘，易清洁</li></ul><h4>适用对象：</h4><p>适合小学生使用，可收纳铅笔、橡皮、尺子等学习用品。</p></div>",
+    "service_guarantees": [
+      {
+        "icon": "Truck",
+        "text": "全场包邮",
+        "color": "text-green-600"
+      },
+      {
+        "icon": "Shield",
+        "text": "正品保障",
+        "color": "text-blue-600"
+      },
+      {
+        "icon": "Package",
+        "text": "7天无理由退换",
+        "color": "text-purple-600"
+      }
+    ],
+    "related_products": ["prod_005", "prod_006", "prod_002"],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  }
+]
+  

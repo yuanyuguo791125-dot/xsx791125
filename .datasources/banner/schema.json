@@ -1,0 +1,37 @@
+
+{
+  "name": "banner",
+  "title": "轮播图",
+  "schemas": [
+    {
+      "name": "image_url",
+      "title": "图片地址",
+      "type": "String"
+    },
+    {
+      "name": "title",
+      "title": "标题",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "title": "描述",
+      "type": "String"
+    },
+    {
+      "name": "link_url",
+      "title": "跳转链接",
+      "type": "String"
+    },
+    {
+      "name": "sort_order",
+      "title": "排序",
+      "type": "Number"
+    },
+    {
+      "name": "is_active",
+      "title": "是否启用",
+      "type": "Boolean"
+    }
+  ]
+}

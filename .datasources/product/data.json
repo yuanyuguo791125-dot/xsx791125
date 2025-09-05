@@ -1,0 +1,316 @@
+
+[
+  {
+    "_id": "prod_001",
+    "name": "小学数学思维训练（三年级适用）",
+    "description": "专为三年级学生设计的数学思维训练，包含100道经典题目，由资深数学教师编写，循序渐进提升孩子的数学思维能力。每道题都配有详细解析，帮助孩子理解解题思路。",
+    "price": 24.9,
+    "original_price": 39.9,
+    "main_image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    "carousel_images": [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop"
+    ],
+    "stock": 100,
+    "sales": 156,
+    "category_id": "cat_001",
+    "category_name": "小学教辅",
+    "brand": "智慧教育",
+    "weight": 0.3,
+    "dimensions": "26cm × 19cm × 1cm",
+    "material": "环保纸张",
+    "is_hot": true,
+    "is_new": false,
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.8,
+    "review_count": 89,
+    "tags": ["数学思维", "三年级", "经典题目", "详细解析"],
+    "specifications": [
+      {
+        "name": "年级",
+        "value": "三年级"
+      },
+      {
+        "name": "页数",
+        "value": "120页"
+      },
+      {
+        "name": "出版社",
+        "value": "教育出版社"
+      },
+      {
+        "name": "ISBN",
+        "value": "978-7-123-45678-9"
+      }
+    ],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "prod_002",
+    "name": "英语单词卡片套装（1-6年级）",
+    "description": "覆盖1-6年级所有英语单词，配有精美插图和发音指导，帮助孩子轻松记忆单词。卡片采用环保材质，防水防撕，可反复使用。",
+    "price": 15.9,
+    "original_price": 29.9,
+    "main_image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop",
+    "carousel_images": [
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=1200&fit=crop"
+    ],
+    "stock": 200,
+    "sales": 89,
+    "category_id": "cat_001",
+    "category_name": "小学教辅",
+    "brand": "快乐学习",
+    "weight": 0.5,
+    "dimensions": "15cm × 10cm × 3cm",
+    "material": "环保铜版纸",
+    "is_hot": false,
+    "is_new": true,
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.7,
+    "review_count": 67,
+    "tags": ["英语单词", "卡片记忆", "1-6年级", "防水防撕"],
+    "specifications": [
+      {
+        "name": "年级",
+        "value": "1-6年级"
+      },
+      {
+        "name": "卡片数量",
+        "value": "300张"
+      },
+      {
+        "name": "材质",
+        "value": "环保铜版纸"
+      },
+      {
+        "name": "尺寸",
+        "value": "8cm × 5cm"
+      }
+    ],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "prod_003",
+    "name": "多功能文具盒（卡通款）",
+    "description": "三层大容量设计，可爱卡通图案，适合小学生使用。采用优质塑料材质，坚固耐用，多个隔层设计，方便分类收纳各种文具。",
+    "price": 12.9,
+    "original_price": 25.9,
+    "main_image": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop",
+    "carousel_images": [
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=1200&fit=crop"
+    ],
+    "stock": 150,
+    "sales": 234,
+    "category_id": "cat_004",
+    "category_name": "文具用品",
+    "brand": "创意文具",
+    "weight": 0.2,
+    "dimensions": "20cm × 8cm × 4cm",
+    "material": "优质塑料",
+    "is_hot": true,
+    "is_new": false,
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.9,
+    "review_count": 156,
+    "tags": ["大容量", "卡通图案", "三层设计", "坚固耐用"],
+    "specifications": [
+      {
+        "name": "层数",
+        "value": "三层"
+      },
+      {
+        "name": "材质",
+        "value": "优质塑料"
+      },
+      {
+        "name": "尺寸",
+        "value": "20cm × 8cm × 4cm"
+      },
+      {
+        "name": "图案",
+        "value": "卡通动物"
+      }
+    ],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "prod_004",
+    "name": "小学生作文大全（1-3年级）",
+    "description": "精选优秀作文范例，配有写作指导和点评，帮助1-3年级小学生提升写作能力。包含记叙文、说明文、应用文等多种文体。",
+    "price": 22.9,
+    "original_price": 35.9,
+    "main_image": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop",
+    "carousel_images": [
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1497633762265-9a1dd7228f2d?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1497633762265-9a1dd7228f2d?w=800&h=1200&fit=crop"
+    ],
+    "stock": 80,
+    "sales": 67,
+    "category_id": "cat_001",
+    "category_name": "小学教辅",
+    "brand": "智慧教育",
+    "weight": 0.4,
+    "dimensions": "26cm × 19cm × 1.2cm",
+    "material": "环保纸张",
+    "is_hot": false,
+    "is_new": true,
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.6,
+    "review_count": 45,
+    "tags": ["作文指导", "1-3年级", "写作技巧", "优秀范文"],
+    "specifications": [
+      {
+        "name": "年级",
+        "value": "1-3年级"
+      },
+      {
+        "name": "页数",
+        "value": "150页"
+      },
+      {
+        "name": "出版社",
+        "value": "教育出版社"
+      },
+      {
+        "name": "适用文体",
+        "value": "记叙文、说明文、应用文"
+      }
+    ],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "prod_005",
+    "name": "儿童练字帖（铅笔字入门）",
+    "description": "田字格设计，适合初学写字的儿童，配有描红练习和笔画顺序指导。采用优质纸张，书写流畅，不易渗透。",
+    "price": 9.9,
+    "original_price": 19.9,
+    "main_image": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=400&fit=crop",
+    "carousel_images": [
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=1200&fit=crop"
+    ],
+    "stock": 300,
+    "sales": 178,
+    "category_id": "cat_004",
+    "category_name": "文具用品",
+    "brand": "练字专家",
+    "weight": 0.2,
+    "dimensions": "26cm × 19cm × 0.5cm",
+    "material": "优质纸张",
+    "is_hot": true,
+    "is_new": false,
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.8,
+    "review_count": 123,
+    "tags": ["铅笔字入门", "田字格", "描红练习", "笔画顺序"],
+    "specifications": [
+      {
+        "name": "类型",
+        "value": "铅笔字"
+      },
+      {
+        "name": "页数",
+        "value": "60页"
+      },
+      {
+        "name": "纸张",
+        "value": "优质书写纸"
+      },
+      {
+        "name": "适用年龄",
+        "value": "5-8岁"
+      }
+    ],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "prod_006",
+    "name": "初中数学公式大全",
+    "description": "涵盖初中所有数学公式，配有详细解释和例题，帮助学生系统掌握数学知识。采用彩色印刷，重点突出，便于记忆。",
+    "price": 18.9,
+    "original_price": 28.9,
+    "main_image": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400&h=400&fit=crop",
+    "carousel_images": [
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=800&fit=crop"
+    ],
+    "detail_images": [
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&h=1200&fit=crop",
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=1200&fit=crop"
+    ],
+    "stock": 120,
+    "sales": 45,
+    "category_id": "cat_002",
+    "category_name": "初中教辅",
+    "brand": "智慧教育",
+    "weight": 0.35,
+    "dimensions": "26cm × 19cm × 0.8cm",
+    "material": "环保纸张",
+    "is_hot": false,
+    "is_new": true,
+    "is_free_shipping": true,
+    "shipping_fee": 0,
+    "rating": 4.7,
+    "review_count": 34,
+    "tags": ["初中数学", "公式大全", "彩色印刷", "系统学习"],
+    "specifications": [
+      {
+        "name": "年级",
+        "value": "初中"
+      },
+      {
+        "name": "页数",
+        "value": "100页"
+      },
+      {
+        "name": "印刷",
+        "value": "彩色印刷"
+      },
+      {
+        "name": "出版社",
+        "value": "教育出版社"
+      }
+    ],
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  }
+]
+  

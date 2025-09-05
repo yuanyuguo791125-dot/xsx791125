@@ -1,0 +1,118 @@
+
+[
+  {
+    "_id": "cart_001",
+    "user_id": "user_123",
+    "product_id": "prod_001",
+    "product_name": "小学数学思维训练（三年级适用）",
+    "price": 24.9,
+    "quantity": 2,
+    "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop",
+    "sku": "sku_001",
+    "stock": 100,
+    "is_selected": true,
+    "specifications": {
+      "grade": "三年级",
+      "subject": "数学",
+      "publisher": "教育出版社"
+    },
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "cart_002",
+    "user_id": "user_123",
+    "product_id": "prod_002",
+    "product_name": "英语单词卡片套装（1-6年级）",
+    "price": 15.9,
+    "quantity": 1,
+    "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop",
+    "sku": "sku_002",
+    "stock": 50,
+    "is_selected": true,
+    "specifications": {
+      "grade": "1-6年级",
+      "subject": "英语",
+      "type": "卡片"
+    },
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "cart_003",
+    "user_id": "user_123",
+    "product_id": "prod_003",
+    "product_name": "多功能文具盒（卡通款）",
+    "price": 12.9,
+    "quantity": 3,
+    "image": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=400&fit=crop",
+    "sku": "sku_003",
+    "stock": 0,
+    "is_selected": false,
+    "specifications": {
+      "type": "文具盒",
+      "style": "卡通",
+      "material": "塑料"
+    },
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "cart_004",
+    "user_id": "user_456",
+    "product_id": "prod_004",
+    "product_name": "语文阅读理解训练（四年级）",
+    "price": 28.9,
+    "quantity": 1,
+    "image": "https://images.unsplash.com/photo-1497633762265-9a1dd7228f2d?w=400&h=400&fit=crop",
+    "sku": "sku_004",
+    "stock": 80,
+    "is_selected": true,
+    "specifications": {
+      "grade": "四年级",
+      "subject": "语文",
+      "type": "练习册"
+    },
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "cart_005",
+    "user_id": "user_456",
+    "product_id": "prod_005",
+    "product_name": "小学生必读书籍套装（10本）",
+    "price": 89.9,
+    "quantity": 1,
+    "image": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop",
+    "sku": "sku_005",
+    "stock": 20,
+    "is_selected": true,
+    "specifications": {
+      "type": "套装",
+      "count": 10,
+      "age": "小学生"
+    },
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  },
+  {
+    "_id": "cart_006",
+    "user_id": "user_789",
+    "product_id": "prod_006",
+    "product_name": "彩色记号笔套装（24色）",
+    "price": 18.9,
+    "quantity": 2,
+    "image": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop",
+    "sku": "sku_006",
+    "stock": 200,
+    "is_selected": true,
+    "specifications": {
+      "type": "记号笔",
+      "count": 24,
+      "color": "彩色"
+    },
+    "createdAt": 1725484800000,
+    "updatedAt": 1725484800000
+  }
+]
+  
