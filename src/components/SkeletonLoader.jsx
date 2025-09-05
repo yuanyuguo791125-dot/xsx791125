@@ -23,6 +23,13 @@ export const SkeletonLoader = ({
     cart: <div className="space-y-4">
         {[1, 2, 3].map(i => <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse"></div>)}
         <div className="h-24 bg-gray-200 rounded-lg animate-pulse fixed bottom-20 left-4 right-4"></div>
+      </div>,
+    payment: <div className="space-y-4">
+        <div className="h-40 bg-gray-200 rounded-lg animate-pulse"></div>
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => <div key={i} className="h-20 bg-gray-200 rounded-lg animate-pulse"></div>)}
+        </div>
+        <div className="h-32 bg-gray-200 rounded-lg animate-pulse"></div>
       </div>
   };
   return skeletons[type] || skeletons.home;
