@@ -1,0 +1,113 @@
+
+{
+  "name": "order",
+  "title": "订单",
+  "schemas": [
+    {
+      "name": "orderId",
+      "title": "订单编号",
+      "type": "String"
+    },
+    {
+      "name": "userId",
+      "title": "用户ID",
+      "type": "String"
+    },
+    {
+      "name": "items",
+      "title": "商品列表",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "totalAmount",
+      "title": "订单总金额",
+      "type": "Number"
+    },
+    {
+      "name": "discountAmount",
+      "title": "优惠金额",
+      "type": "Number"
+    },
+    {
+      "name": "payAmount",
+      "title": "实付金额",
+      "type": "Number"
+    },
+    {
+      "name": "status",
+      "title": "订单状态",
+      "type": "String"
+    },
+    {
+      "name": "address",
+      "title": "收货地址",
+      "type": "Object"
+    },
+    {
+      "name": "createdAt",
+      "title": "创建时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "paidAt",
+      "title": "支付时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "shippedAt",
+      "title": "发货时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "deliveredAt",
+      "title": "收货时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "expressCompany",
+      "title": "快递公司",
+      "type": "String"
+    },
+    {
+      "name": "trackingNo",
+      "title": "运单号",
+      "type": "String"
+    },
+    {
+      "name": "timeline",
+      "title": "物流轨迹",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "paymentMethod",
+      "title": "支付方式",
+      "type": "String"
+    },
+    {
+      "name": "remark",
+      "title": "订单备注",
+      "type": "String"
+    },
+    {
+      "name": "couponId",
+      "title": "优惠券ID",
+      "type": "String"
+    },
+    {
+      "name": "pointsUsed",
+      "title": "使用积分",
+      "type": "Number"
+    }
+  ]
+}
+  

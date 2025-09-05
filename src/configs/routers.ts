@@ -3,6 +3,9 @@ import PRODUCTDETAIL from '../pages/productDetail.jsx';
 import GROUPLIST from '../pages/groupList.jsx';
 import PROFILE from '../pages/profile.jsx';
 import CART from '../pages/cart.jsx';
+import ORDERLIST from '../pages/orderList.jsx';
+import ORDERDETAIL from '../pages/orderDetail.jsx';
+import PAYMENT from '../pages/payment.jsx';
 export const routers = [{
   id: "home",
   component: HOME
@@ -18,4 +21,13 @@ export const routers = [{
 }, {
   id: "cart",
   component: CART
+}, {
+  id: "orderList",
+  component: ORDERLIST
+}, {
+  id: "orderDetail",
+  component: ORDERDETAIL
+}, {
+  id: "payment",
+  component: PAYMENT
 }]

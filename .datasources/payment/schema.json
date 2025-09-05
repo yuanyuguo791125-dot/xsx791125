@@ -1,0 +1,76 @@
+
+{
+  "name": "payment",
+  "title": "支付记录",
+  "schemas": [
+    {
+      "name": "paymentId",
+      "title": "支付ID",
+      "type": "String"
+    },
+    {
+      "name": "orderId",
+      "title": "订单ID",
+      "type": "String"
+    },
+    {
+      "name": "userId",
+      "title": "用户ID",
+      "type": "String"
+    },
+    {
+      "name": "payMethod",
+      "title": "支付方式",
+      "type": "String"
+    },
+    {
+      "name": "payAmount",
+      "title": "支付金额",
+      "type": "Number"
+    },
+    {
+      "name": "pointsUsed",
+      "title": "使用积分",
+      "type": "Number"
+    },
+    {
+      "name": "status",
+      "title": "支付状态",
+      "type": "String"
+    },
+    {
+      "name": "createdAt",
+      "title": "创建时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "completedAt",
+      "title": "完成时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "transactionId",
+      "title": "交易流水号",
+      "type": "String"
+    },
+    {
+      "name": "failReason",
+      "title": "失败原因",
+      "type": "String"
+    },
+    {
+      "name": "refundAmount",
+      "title": "退款金额",
+      "type": "Number"
+    },
+    {
+      "name": "refundAt",
+      "title": "退款时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    }
+  ]
+}
+  

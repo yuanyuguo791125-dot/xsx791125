@@ -1,42 +1,52 @@
 // @ts-ignore;
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 // @ts-ignore;
-import { ChevronRight } from 'lucide-react';
+import { Card, CardContent, Button } from '@/components/ui';
+// @ts-ignore;
+import { ShoppingCart } from 'lucide-react';
 
-export function CartSummary({
-  totalAmount,
-  pointsDiscount,
-  usePoints,
-  onTogglePoints,
+export const CartSummary = memo(({
+  items,
+  selectedItems,
   onCheckout
-}) {
-  const finalAmount = totalAmount - (usePoints ? pointsDiscount : 0);
-  return <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-4">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center">
-          <input type="checkbox" className="mr-2" />
-          <span className="text-sm">全选</span>
+}) => {
+  const summary = useMemo(() => {
+    const selected = items.filter(item => selectedItems.includes(item._id));
+    const totalAmount = selected.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalCount = selected.reduce((sum, item) => sum + item.quantity, 0);
+    const savings = selected.reduce((sum, item) => sum + (item.originalPrice - item.price) * item.quantity, 0);
+    return {
+      totalAmount,
+      totalCount,
+      savings,
+      selectedCount: selected.length
+    };
+  }, [items, selectedItems]);
+  return <Card className="sticky bottom-20 bg-white">
+      <CardContent className="p-4">
+        <div className="space-y-2 mb-4">
+          <div className="flex justify-between text-sm">
+            <span>已选商品</span>
+            <span>{summary.selectedCount}件</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span>商品总价</span>
+            <span>¥{summary.totalAmount.toFixed(2)}</span>
+          </div>
+          {summary.savings > 0 && <div className="flex justify-between text-sm text-green-600">
+              <span>已优惠</span>
+              <span>-¥{summary.savings.toFixed(2)}</span>
+            </div>}
+          <div className="flex justify-between font-bold text-lg pt-2 border-t">
+            <span>合计</span>
+            <span className="text-red-600">¥{summary.totalAmount.toFixed(2)}</span>
+          </div>
         </div>
         
-        <div className="flex items-center">
-          <span className="text-sm text-gray-600">合计：</span>
-          <span className="text-lg font-bold text-red-600">¥{finalAmount.toFixed(2)}</span>
-        </div>
-      </div>
-      
-      {/* 积分抵扣 */}
-      <div className="flex items-center justify-between mb-3 p-3 bg-purple-50 rounded-lg">
-        <div>
-          <span className="text-sm font-medium text-purple-800">积分抵扣</span>
-          <span className="text-xs text-purple-600 ml-2">可用积分抵扣¥{pointsDiscount}</span>
-        </div>
-        <button onClick={onTogglePoints} className={`w-10 h-6 rounded-full transition-colors ${usePoints ? 'bg-purple-600' : 'bg-gray-300'}`}>
-          <div className={`w-4 h-4 bg-white rounded-full transition-transform ${usePoints ? 'translate-x-5' : 'translate-x-1'}`} />
-        </button>
-      </div>
-      
-      <button onClick={onCheckout} className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium">
-        结算 ({finalAmount.toFixed(2)})
-      </button>
-    </div>;
-}
+        <Button className="w-full h-12 text-base" onClick={onCheckout} disabled={summary.selectedCount === 0}>
+          <ShoppingCart className="w-5 h-5 mr-2" />
+          结算 ({summary.totalCount})
+        </Button>
+      </CardContent>
+    </Card>;
+});

@@ -1,0 +1,353 @@
+
+[
+  {
+    "_id": "order_001",
+    "orderId": "20240906123456",
+    "userId": "user_001",
+    "items": [
+      {
+        "productId": "prod_001",
+        "skuId": "MATH-001-STD",
+        "name": "小学数学思维训练（三年级适用）",
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+        "price": 24.9,
+        "quantity": 2,
+        "specifications": {
+          "年级": "三年级",
+          "装帧": "平装"
+        }
+      },
+      {
+        "productId": "prod_002",
+        "skuId": "ENG-001-STD",
+        "name": "英语单词卡片套装（1-6年级）",
+        "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&h=200&fit=crop",
+        "price": 15.9,
+        "quantity": 1,
+        "specifications": {
+          "年级": "1-6年级",
+          "包装": "盒装"
+        }
+      }
+    ],
+    "totalAmount": 65.7,
+    "discountAmount": 5.0,
+    "payAmount": 60.7,
+    "status": "待发货",
+    "address": {
+      "name": "小明同学",
+      "phone": "138****8888",
+      "province": "广东省",
+      "city": "深圳市",
+      "district": "南山区",
+      "detail": "科技园南区1号楼",
+      "postalCode": "518000"
+    },
+    "createdAt": 1725571200000,
+    "paidAt": 1725571800000,
+    "shippedAt": null,
+    "deliveredAt": null,
+    "expressCompany": "顺丰速运",
+    "trackingNo": "SF1234567890123",
+    "timeline": [
+      {
+        "time": 1725571200000,
+        "location": "系统",
+        "description": "订单已创建"
+      },
+      {
+        "time": 1725571800000,
+        "location": "系统",
+        "description": "订单已支付"
+      },
+      {
+        "time": 1725572000000,
+        "location": "系统",
+        "description": "商家已接单"
+      }
+    ],
+    "paymentMethod": "微信支付",
+    "remark": "请尽快发货，谢谢！",
+    "couponId": "coupon_001",
+    "pointsUsed": 0,
+    "createdAt": 1725571200000,
+    "updatedAt": 1725572000000
+  },
+  {
+    "_id": "order_002",
+    "orderId": "20240905987654",
+    "userId": "user_001",
+    "items": [
+      {
+        "productId": "prod_003",
+        "skuId": "BOX-001-BLUE",
+        "name": "多功能文具盒（卡通款）",
+        "image": "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=200&h=200&fit=crop",
+        "price": 12.9,
+        "quantity": 1,
+        "specifications": {
+          "颜色": "蓝色",
+          "图案": "卡通动物"
+        }
+      }
+    ],
+    "totalAmount": 12.9,
+    "discountAmount": 0,
+    "payAmount": 12.9,
+    "status": "待收货",
+    "address": {
+      "name": "小明同学",
+      "phone": "138****8888",
+      "province": "广东省",
+      "city": "深圳市",
+      "district": "南山区",
+      "detail": "科技园南区1号楼",
+      "postalCode": "518000"
+    },
+    "createdAt": 1725484800000,
+    "paidAt": 1725485400000,
+    "shippedAt": 1725486000000,
+    "deliveredAt": null,
+    "expressCompany": "中通快递",
+    "trackingNo": "ZT9876543210987",
+    "timeline": [
+      {
+        "time": 1725484800000,
+        "location": "系统",
+        "description": "订单已创建"
+      },
+      {
+        "time": 1725485400000,
+        "location": "系统",
+        "description": "订单已支付"
+      },
+      {
+        "time": 1725486000000,
+        "location": "深圳市",
+        "description": "包裹已揽收"
+      },
+      {
+        "time": 1725493200000,
+        "location": "深圳市转运中心",
+        "description": "包裹已发出"
+      },
+      {
+        "time": 1725500400000,
+        "location": "广州市转运中心",
+        "description": "包裹已到达"
+      },
+      {
+        "time": 1725507600000,
+        "location": "广州市转运中心",
+        "description": "包裹已发出"
+      },
+      {
+        "time": 1725514800000,
+        "location": "深圳市南山区",
+        "description": "包裹派送中"
+      }
+    ],
+    "paymentMethod": "微信支付",
+    "remark": "",
+    "couponId": null,
+    "pointsUsed": 0,
+    "createdAt": 1725484800000,
+    "updatedAt": 1725514800000
+  },
+  {
+    "_id": "order_003",
+    "orderId": "20240904876543",
+    "userId": "user_002",
+    "items": [
+      {
+        "productId": "prod_004",
+        "skuId": "ESSAY-001-STD",
+        "name": "小学生作文大全（1-3年级）",
+        "image": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=200&fit=crop",
+        "price": 22.9,
+        "quantity": 1,
+        "specifications": {
+          "年级": "1-3年级",
+          "装帧": "平装"
+        }
+      },
+      {
+        "productId": "prod_005",
+        "skuId": "PRACTICE-001-STD",
+        "name": "儿童练字帖（铅笔字入门）",
+        "image": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=200&h=200&fit=crop",
+        "price": 9.9,
+        "quantity": 2,
+        "specifications": {
+          "类型": "铅笔字",
+          "页数": "60页"
+        }
+      }
+    ],
+    "totalAmount": 42.7,
+    "discountAmount": 2.0,
+    "payAmount": 40.7,
+    "status": "已完成",
+    "address": {
+      "name": "学习达人",
+      "phone": "139****9999",
+      "province": "北京市",
+      "city": "海淀区",
+      "district": "中关村",
+      "detail": "中关村大街1号",
+      "postalCode": "100000"
+    },
+    "createdAt": 1725398400000,
+    "paidAt": 1725399000000,
+    "shippedAt": 1725399600000,
+    "deliveredAt": 1725417600000,
+    "expressCompany": "圆通速递",
+    "trackingNo": "YT1234567890123",
+    "timeline": [
+      {
+        "time": 1725398400000,
+        "location": "系统",
+        "description": "订单已创建"
+      },
+      {
+        "time": 1725399000000,
+        "location": "系统",
+        "description": "订单已支付"
+      },
+      {
+        "time": 1725399600000,
+        "location": "北京市",
+        "description": "包裹已揽收"
+      },
+      {
+        "time": 1725403200000,
+        "location": "北京市转运中心",
+        "description": "包裹已发出"
+      },
+      {
+        "time": 1725410400000,
+        "location": "北京市海淀区",
+        "description": "包裹派送中"
+      },
+      {
+        "time": 1725417600000,
+        "location": "北京市海淀区",
+        "description": "已签收，感谢使用"
+      }
+    ],
+    "paymentMethod": "余额支付",
+    "remark": "请尽快发货",
+    "couponId": "coupon_002",
+    "pointsUsed": 100,
+    "createdAt": 1725398400000,
+    "updatedAt": 1725417600000
+  },
+  {
+    "_id": "order_004",
+    "orderId": "20240903987654",
+    "userId": "user_001",
+    "items": [
+      {
+        "productId": "prod_006",
+        "skuId": "MATH-002-STD",
+        "name": "初中数学公式大全",
+        "image": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop",
+        "price": 18.9,
+        "quantity": 1,
+        "specifications": {
+          "年级": "初中",
+          "印刷": "彩色印刷"
+        }
+      }
+    ],
+    "totalAmount": 18.9,
+    "discountAmount": 0,
+    "payAmount": 18.9,
+    "status": "待付款",
+    "address": {
+      "name": "小明同学",
+      "phone": "138****8888",
+      "province": "广东省",
+      "city": "深圳市",
+      "district": "南山区",
+      "detail": "科技园南区1号楼",
+      "postalCode": "518000"
+    },
+    "createdAt": 1725300000000,
+    "paidAt": null,
+    "shippedAt": null,
+    "deliveredAt": null,
+    "expressCompany": null,
+    "trackingNo": null,
+    "timeline": [
+      {
+        "time": 1725300000000,
+        "location": "系统",
+        "description": "订单已创建"
+      }
+    ],
+    "paymentMethod": null,
+    "remark": "",
+    "couponId": null,
+    "pointsUsed": 0,
+    "createdAt": 1725300000000,
+    "updatedAt": 1725300000000
+  },
+  {
+    "_id": "order_005",
+    "orderId": "20240902987654",
+    "userId": "user_003",
+    "items": [
+      {
+        "productId": "prod_001",
+        "skuId": "MATH-001-STD",
+        "name": "小学数学思维训练（三年级适用）",
+        "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
+        "price": 24.9,
+        "quantity": 1,
+        "specifications": {
+          "年级": "三年级",
+          "装帧": "平装"
+        }
+      }
+    ],
+    "totalAmount": 24.9,
+    "discountAmount": 0,
+    "payAmount": 24.9,
+    "status": "已取消",
+    "address": {
+      "name": "新手用户",
+      "phone": "137****7777",
+      "province": "上海市",
+      "city": "浦东新区",
+      "district": "陆家嘴",
+      "detail": "陆家嘴环路1000号",
+      "postalCode": "200000"
+    },
+    "createdAt": 1725213600000,
+    "paidAt": null,
+    "shippedAt": null,
+    "deliveredAt": null,
+    "expressCompany": null,
+    "trackingNo": null,
+    "timeline": [
+      {
+        "time": 1725213600000,
+        "location": "系统",
+        "description": "订单已创建"
+      },
+      {
+        "time": 1725217200000,
+        "location": "系统",
+        "description": "订单已取消"
+      }
+    ],
+    "paymentMethod": null,
+    "remark": "",
+    "couponId": null,
+    "pointsUsed": 0,
+    "createdAt": 1725213600000,
+    "updatedAt": 1725217200000
+  }
+]
+  

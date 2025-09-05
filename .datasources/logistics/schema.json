@@ -1,0 +1,73 @@
+
+{
+  "name": "logistics",
+  "title": "物流信息",
+  "schemas": [
+    {
+      "name": "trackingNo",
+      "title": "运单号",
+      "type": "String"
+    },
+    {
+      "name": "expressCompany",
+      "title": "快递公司",
+      "type": "String"
+    },
+    {
+      "name": "orderId",
+      "title": "订单ID",
+      "type": "String"
+    },
+    {
+      "name": "timeline",
+      "title": "物流轨迹",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "latestStatus",
+      "title": "最新状态",
+      "type": "String"
+    },
+    {
+      "name": "updatedAt",
+      "title": "更新时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "receiver",
+      "title": "收件人",
+      "type": "String"
+    },
+    {
+      "name": "phone",
+      "title": "联系电话",
+      "type": "String"
+    },
+    {
+      "name": "deliveryAddress",
+      "title": "收货地址",
+      "type": "String"
+    },
+    {
+      "name": "estimatedDelivery",
+      "title": "预计送达时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "packageInfo",
+      "title": "包裹信息",
+      "type": "Object"
+    },
+    {
+      "name": "courier",
+      "title": "快递员信息",
+      "type": "Object"
+    }
+  ]
+}
+  
