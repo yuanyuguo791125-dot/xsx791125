@@ -3,34 +3,41 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 // @ts-ignore;
 import { Card, CardContent, Button, Checkbox, useToast } from '@/components/ui';
 // @ts-ignore;
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
 
+// @ts-ignore;
+import { LazyImage } from '@/components/LazyImage';
+// @ts-ignore;
+import { SkeletonLoader } from '@/components/SkeletonLoader';
+// @ts-ignore;
+import { VirtualizedList } from '@/components/VirtualizedList';
 // @ts-ignore;
 import { CartItemCard } from '@/components/CartItemCard';
 // @ts-ignore;
-import { CartSummary } from '@/components/CartSummary';
-// @ts-ignore;
 import { EmptyCart } from '@/components/EmptyCart';
 // @ts-ignore;
-import { SkeletonLoader } from '@/components/SkeletonLoader';
+import { CartSummary } from '@/components/CartSummary';
 export default function Cart(props) {
   const {
     $w
   } = props;
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectAll, setSelectAll] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [updatingItems, setUpdatingItems] = useState(new Set());
+  const [selectAll, setSelectAll] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const {
     toast
   } = useToast();
 
-  // 缓存计算结果
-  const cartCache = useMemo(() => ({
-    items: cartItems,
-    selected: selectedItems
-  }), [cartItems, selectedItems]);
+  // 防抖处理
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+  };
   const fetchCart = useCallback(async () => {
     try {
       setLoading(true);
@@ -45,23 +52,15 @@ export default function Cart(props) {
               }
             }
           },
-          select: {
-            $master: true
-          },
           orderBy: [{
             createdAt: 'desc'
-          }]
+          }],
+          select: {
+            $master: true
+          }
         }
       });
-      const items = result.records || [];
-      setCartItems(items);
-
-      // 默认全选
-      if (items.length > 0) {
-        const allIds = items.map(item => item._id);
-        setSelectedItems(allIds);
-        setSelectAll(true);
-      }
+      setCartItems(result.records || []);
     } catch (error) {
       toast({
         title: "获取购物车失败",
@@ -76,64 +75,27 @@ export default function Cart(props) {
     fetchCart();
   }, [fetchCart]);
 
-  // 批量更新商品状态
-  const handleUpdateItems = useCallback(async updates => {
-    const updatePromises = updates.map(({
-      id,
-      data
-    }) => $w.cloud.callDataSource({
-      dataSourceName: 'shopping_cart',
-      methodName: 'wedaUpdateV2',
-      params: {
-        data,
-        filter: {
-          where: {
-            _id: {
-              $eq: id
-            }
-          }
-        }
-      }
-    }));
+  // 更新购物车商品
+  const updateCartItem = useCallback(async (itemId, updates) => {
     try {
-      await Promise.all(updatePromises);
-      setCartItems(prev => prev.map(item => {
-        const update = updates.find(u => u.id === item._id);
-        return update ? {
-          ...item,
-          ...update.data
-        } : item;
-      }));
-    } catch (error) {
-      toast({
-        title: "更新失败",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  }, []);
-
-  // 单个商品更新
-  const handleUpdateItem = useCallback(async (id, data) => {
-    setUpdatingItems(prev => new Set(prev).add(id));
-    try {
+      setUpdating(true);
       await $w.cloud.callDataSource({
         dataSourceName: 'shopping_cart',
         methodName: 'wedaUpdateV2',
         params: {
-          data,
+          data: updates,
           filter: {
             where: {
               _id: {
-                $eq: id
+                $eq: itemId
               }
             }
           }
         }
       });
-      setCartItems(prev => prev.map(item => item._id === id ? {
+      setCartItems(prev => prev.map(item => item._id === itemId ? {
         ...item,
-        ...data
+        ...updates
       } : item));
     } catch (error) {
       toast({
@@ -142,16 +104,12 @@ export default function Cart(props) {
         variant: "destructive"
       });
     } finally {
-      setUpdatingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
+      setUpdating(false);
     }
   }, []);
 
-  // 删除商品
-  const handleRemoveItem = useCallback(async id => {
+  // 删除购物车商品
+  const removeCartItem = useCallback(async itemId => {
     try {
       await $w.cloud.callDataSource({
         dataSourceName: 'shopping_cart',
@@ -160,14 +118,14 @@ export default function Cart(props) {
           filter: {
             where: {
               _id: {
-                $eq: id
+                $eq: itemId
               }
             }
           }
         }
       });
-      setCartItems(prev => prev.filter(item => item._id !== id));
-      setSelectedItems(prev => prev.filter(itemId => itemId !== id));
+      setCartItems(prev => prev.filter(item => item._id !== itemId));
+      setSelectedItems(prev => prev.filter(id => id !== itemId));
       toast({
         title: "删除成功",
         description: "商品已从购物车移除"
@@ -182,7 +140,7 @@ export default function Cart(props) {
   }, []);
 
   // 批量删除
-  const handleBatchRemove = useCallback(async () => {
+  const handleBatchDelete = useCallback(async () => {
     if (selectedItems.length === 0) return;
     try {
       await $w.cloud.callDataSource({
@@ -202,47 +160,36 @@ export default function Cart(props) {
       setSelectedItems([]);
       setSelectAll(false);
       toast({
-        title: "删除成功",
-        description: `已删除${selectedItems.length}件商品`
+        title: "批量删除成功",
+        description: `已删除 ${selectedItems.length} 件商品`
       });
     } catch (error) {
       toast({
-        title: "删除失败",
+        title: "批量删除失败",
         description: error.message,
         variant: "destructive"
       });
     }
   }, [selectedItems]);
 
-  // 选择商品
-  const handleSelectItem = useCallback((id, checked) => {
-    setSelectedItems(prev => {
-      if (checked) {
-        return [...prev, id];
-      } else {
-        return prev.filter(itemId => itemId !== id);
-      }
-    });
+  // 选择/取消选择商品
+  const handleSelectItem = useCallback((itemId, checked) => {
+    setSelectedItems(prev => checked ? [...prev, itemId] : prev.filter(id => id !== itemId));
   }, []);
 
   // 全选/取消全选
   const handleSelectAll = useCallback(checked => {
     setSelectAll(checked);
-    if (checked) {
-      setSelectedItems(cartItems.map(item => item._id));
-    } else {
-      setSelectedItems([]);
-    }
+    setSelectedItems(checked ? cartItems.map(item => item._id) : []);
   }, [cartItems]);
 
-  // 监听全选状态
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      setSelectAll(selectedItems.length === cartItems.length);
-    }
-  }, [selectedItems, cartItems]);
+  // 防抖计算总金额
+  const debouncedTotalAmount = useMemo(() => {
+    const selectedItemsData = cartItems.filter(item => selectedItems.includes(item._id));
+    return selectedItemsData.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }, [cartItems, selectedItems]);
 
-  // 结算
+  // 去结算
   const handleCheckout = useCallback(() => {
     if (selectedItems.length === 0) {
       toast({
@@ -252,56 +199,60 @@ export default function Cart(props) {
       });
       return;
     }
-    const selectedProducts = cartItems.filter(item => selectedItems.includes(item._id));
+    const selectedItemsData = cartItems.filter(item => selectedItems.includes(item._id));
     $w.utils.navigateTo({
       pageId: 'orderConfirm',
       params: {
-        items: JSON.stringify(selectedProducts)
+        items: JSON.stringify(selectedItemsData),
+        totalAmount: debouncedTotalAmount
       }
     });
-  }, [selectedItems, cartItems]);
+  }, [selectedItems, cartItems, debouncedTotalAmount]);
 
-  // 浏览商品
-  const handleBrowse = useCallback(() => {
+  // 返回购物
+  const handleNavigateToHome = useCallback(() => {
     $w.utils.navigateTo({
       pageId: 'home'
     });
   }, []);
-
-  // 计算总价
-  const totalPrice = useMemo(() => {
-    return cartItems.filter(item => selectedItems.includes(item._id)).reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }, [cartItems, selectedItems]);
   if (loading) {
     return <div className="min-h-screen bg-gray-50 p-4">
-        <SkeletonLoader type="cart" />
+        <SkeletonLoader type="cart" count={3} />
       </div>;
   }
   if (cartItems.length === 0) {
-    return <EmptyCart onBrowse={handleBrowse} />;
+    return <div className="min-h-screen bg-gray-50">
+        <EmptyCart onNavigate={handleNavigateToHome} />
+      </div>;
   }
   return <div className="min-h-screen bg-gray-50">
-      <div className="sticky top-0 bg-white z-10 p-4 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold">购物车 ({cartItems.length})</h1>
-          {selectedItems.length > 0 && <Button variant="ghost" size="sm" onClick={handleBatchRemove} className="text-red-600">
-              删除选中
-            </Button>}
-        </div>
-      </div>
-
       <div className="p-4 pb-32">
-        <div className="flex items-center gap-3 mb-4 p-3 bg-white rounded-lg">
-          <Checkbox checked={selectAll} onCheckedChange={handleSelectAll} />
-          <span className="text-sm font-medium">全选</span>
-          <span className="text-sm text-gray-500 ml-auto">
-            已选 {selectedItems.length} 件商品
-          </span>
-        </div>
+        {/* 顶部操作栏 */}
+        <Card className="mb-4">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Checkbox checked={selectAll} onCheckedChange={handleSelectAll} />
+              <span className="text-sm font-medium">全选</span>
+            </div>
+            <Button variant="ghost" size="sm" onClick={handleBatchDelete} disabled={selectedItems.length === 0} className="text-red-600">
+              <Trash2 className="w-4 h-4 mr-1" />
+              批量删除
+            </Button>
+          </CardContent>
+        </Card>
 
-        {cartItems.map(item => <CartItemCard key={item._id} item={item} onUpdate={handleUpdateItem} onRemove={handleRemoveItem} onSelect={handleSelectItem} />)}
+        {/* 购物车商品列表 */}
+        <VirtualizedList items={cartItems} renderItem={item => <CartItemCard item={item} onUpdate={updateCartItem} onRemove={removeCartItem} onSelect={handleSelectItem} isSelected={selectedItems.includes(item._id)} />} itemHeight={140} className="h-[calc(100vh-300px)]" />
+
+        {/* 加载状态 */}
+        {updating && <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+            <div className="bg-white p-4 rounded-lg">
+              <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>}
       </div>
 
-      <CartSummary items={cartItems} selectedItems={selectedItems} onCheckout={handleCheckout} />
+      {/* 结算栏 */}
+      <CartSummary items={cartItems} selectedItems={selectedItems} onCheckout={handleCheckout} onBatchDelete={handleBatchDelete} />
     </div>;
 }

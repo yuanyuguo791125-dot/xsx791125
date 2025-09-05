@@ -42,11 +42,11 @@ const ActionBar = memo(({
             +
           </Button>
         </div>
-        <Button className="flex-1" onClick={onAddToCart}>
+        <Button className="flex-1" onClick={onAddToCart} size="sm">
           <ShoppingCart className="w-4 h-4 mr-2" />
           加入购物车
         </Button>
-        <Button variant="destructive" className="flex-1" onClick={onBuyNow}>
+        <Button variant="destructive" className="flex-1" onClick={onBuyNow} size="sm">
           立即购买
         </Button>
       </div>
@@ -58,6 +58,7 @@ export default function ProductDetail(props) {
   } = props;
   const productId = $w.page.dataset.params.productId;
   const [product, setProduct] = useState(null);
+  const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -68,8 +69,23 @@ export default function ProductDetail(props) {
   const fetchProduct = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await $w.cloud.callDataSource({
+      const [productResult, inventoryResult] = await Promise.all([$w.cloud.callDataSource({
         dataSourceName: 'product_detail',
+        methodName: 'wedaGetItemV2',
+        params: {
+          filter: {
+            where: {
+              _id: {
+                $eq: productId
+              }
+            }
+          },
+          select: {
+            $master: true
+          }
+        }
+      }), $w.cloud.callDataSource({
+        dataSourceName: 'product_inventory',
         methodName: 'wedaGetItemV2',
         params: {
           filter: {
@@ -83,8 +99,9 @@ export default function ProductDetail(props) {
             $master: true
           }
         }
-      });
-      setProduct(result);
+      })]);
+      setProduct(productResult);
+      setInventory(inventoryResult);
     } catch (error) {
       toast({
         title: "获取商品详情失败",
@@ -99,6 +116,14 @@ export default function ProductDetail(props) {
     fetchProduct();
   }, [fetchProduct]);
   const handleAddToCart = useCallback(async () => {
+    if (!product || !inventory || inventory.stock < quantity) {
+      toast({
+        title: "库存不足",
+        description: "商品库存不足",
+        variant: "destructive"
+      });
+      return;
+    }
     try {
       await $w.cloud.callDataSource({
         dataSourceName: 'shopping_cart',
@@ -106,9 +131,13 @@ export default function ProductDetail(props) {
         params: {
           data: {
             userId: $w.auth.currentUser?.userId || 'demo_user',
-            productId: productId,
+            productId: product._id,
+            productName: product.name,
+            productImage: product.images?.[0] || product.image,
+            price: product.price,
             quantity: quantity,
-            selected: true
+            selected: true,
+            stock: inventory.stock
           }
         }
       });
@@ -123,22 +152,20 @@ export default function ProductDetail(props) {
         variant: "destructive"
       });
     }
-  }, [productId, quantity]);
+  }, [product, inventory, quantity]);
   const handleBuyNow = useCallback(() => {
-    // 立即购买逻辑
+    if (!product) return;
     $w.utils.navigateTo({
-      pageId: 'cart'
+      pageId: 'orderConfirm',
+      params: {
+        productId: product._id,
+        quantity: quantity
+      }
     });
-  }, []);
+  }, [product, quantity]);
   if (loading) {
     return <div className="min-h-screen bg-gray-50 p-4">
-        <div className="animate-pulse">
-          <div className="h-80 bg-gray-200 rounded-lg mb-4"></div>
-          <div className="h-8 bg-gray-200 rounded mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded mb-4"></div>
-          <div className="h-20 bg-gray-200 rounded mb-4"></div>
-          <div className="h-12 bg-gray-200 rounded"></div>
-        </div>
+        <SkeletonLoader type="productDetail" />
       </div>;
   }
   if (!product) {
@@ -183,8 +210,15 @@ export default function ProductDetail(props) {
             
             <div>
               <h3 className="font-semibold mb-2">商品详情</h3>
-              <p className="text-sm text-gray-600">{product.description}</p>
+              <p className="text-sm text-gray-600">{product.description || '暂无商品描述'}</p>
             </div>
+            
+            {inventory && <div className="bg-blue-50 p-3 rounded-lg">
+                <p className="text-sm">
+                  <span className="font-semibold">库存：</span>
+                  {inventory.stock > 0 ? `${inventory.stock}件` : '暂时缺货'}
+                </p>
+              </div>}
           </div>
         </div>
       </div>
