@@ -19,3 +19,4 @@ export * from './EmptyCart.jsx';
 export * from './PaymentMethodCard.jsx';
 export * from './PointsDeduction.jsx';
 export * from './CountdownTimer.jsx';
+export * from './OrderCard.jsx';
