@@ -1,20 +1,21 @@
 // @ts-ignore;
 import React from 'react';
+// @ts-ignore;
+import { Card, CardContent } from '@/components/ui';
 
 export function FeatureCard({
   icon: Icon,
   title,
+  value,
   subtitle,
-  color,
   onClick
 }) {
-  return <button onClick={onClick} className={`bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex items-center`}>
-      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${color}`}>
-        <Icon size={24} className="text-white" />
-      </div>
-      <div className="ml-3 text-left">
-        <h3 className="font-medium text-gray-900">{title}</h3>
-        <p className="text-sm text-gray-500">{subtitle}</p>
-      </div>
-    </button>;
+  return <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
+      <CardContent className="p-4 text-center">
+        <Icon className="w-8 h-8 mx-auto mb-2 text-blue-500" />
+        <p className="text-2xl font-bold">{value}</p>
+        <p className="text-sm text-gray-500">{title}</p>
+        <p className="text-xs text-gray-400">{subtitle}</p>
+      </CardContent>
+    </Card>;
 }

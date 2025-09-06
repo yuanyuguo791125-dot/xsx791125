@@ -1,222 +1,51 @@
 // @ts-ignore;
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // @ts-ignore;
-import { User, Settings, CreditCard, Package, Heart, MessageCircle, HelpCircle, ChevronRight, Star, TrendingUp } from 'lucide-react';
+import { Card, CardContent, Button, Avatar, AvatarImage, AvatarFallback, useToast, Badge, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui';
 // @ts-ignore;
-import { useToast } from '@/components/ui';
+import { User, Settings, Gift, History, Camera, Edit3, LogOut, RefreshCw, AlertCircle, MapPin } from 'lucide-react';
 
-import { TabBar } from '@/components/TabBar.jsx';
-import { ProfileHeader } from '@/components/ProfileHeader.jsx';
-import { PointsHistory } from '@/components/PointsHistory.jsx';
+// @ts-ignore;
+import { ProfileHeader } from '@/components/ProfileHeader';
+// @ts-ignore;
+import { FeatureCard } from '@/components/FeatureCard';
+// @ts-ignore;
+import { PointsHistory } from '@/components/PointsHistory';
+// @ts-ignore;
+import { LazyImage } from '@/components/LazyImage';
 
-// 个人中心头部组件
-function ProfileHeaderComponent({
-  user,
-  stats,
-  onEditProfile
-}) {
-  if (!user) {
-    return <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6">
-        <div className="flex items-center">
-          <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-            <User size={32} className="text-white" />
-          </div>
-          <div className="ml-4">
-            <h2 className="text-white text-lg font-bold">未登录</h2>
-            <p className="text-white/80 text-sm">点击登录/注册</p>
-          </div>
-          <ChevronRight size={20} className="text-white/80 ml-auto" />
-        </div>
-        <div className="flex justify-around mt-6">
-          <div className="text-center">
-            <div className="text-white text-xl font-bold">0</div>
-            <div className="text-white/80 text-xs">积分</div>
-          </div>
-          <div className="text-center">
-            <div className="text-white text-xl font-bold">0</div>
-            <div className="text-white/80 text-xs">收藏</div>
-          </div>
-          <div className="text-center">
-            <div className="text-white text-xl font-bold">0</div>
-            <div className="text-white/80 text-xs">足迹</div>
-          </div>
-        </div>
-      </div>;
+// 图片路径处理
+const processImageUrl = url => {
+  if (!url) return 'https://via.placeholder.com/100x100?text=User';
+  if (url.startsWith('cloud://')) {
+    return url.replace('cloud://', 'https://your-cdn.com/');
   }
-  return <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6">
-      <div className="flex items-center">
-        <img src={user.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop&crop=face"} alt="用户头像" className="w-16 h-16 rounded-full border-2 border-white" />
-        <div className="ml-4">
-          <h2 className="text-white text-lg font-bold">{user.nickname || '用户'}</h2>
-          <p className="text-white/80 text-sm">{user.level || '普通会员'}</p>
-        </div>
-        <button onClick={onEditProfile} className="ml-auto">
-          <Settings size={20} className="text-white/80" />
-        </button>
-      </div>
-      <div className="flex justify-around mt-6">
-        <div className="text-center">
-          <div className="text-white text-xl font-bold">{user.points || 0}</div>
-          <div className="text-white/80 text-xs">积分</div>
-        </div>
-        <div className="text-center">
-          <div className="text-white text-xl font-bold">{user.favorites_count || 0}</div>
-          <div className="text-white/80 text-xs">收藏</div>
-        </div>
-        <div className="text-center">
-          <div className="text-white text-xl font-bold">{user.history_count || 0}</div>
-          <div className="text-white/80 text-xs">足迹</div>
-        </div>
-      </div>
-    </div>;
-}
+  if (url.startsWith('/')) {
+    return `https://your-cdn.com${url}`;
+  }
+  return url;
+};
 
-// 订单状态组件
-function OrderStatus({
-  counts
-}) {
-  const statuses = [{
-    icon: Package,
-    label: '待付款',
-    count: counts?.pending || 0
-  }, {
-    icon: Package,
-    label: '待发货',
-    count: counts?.shipping || 0
-  }, {
-    icon: Package,
-    label: '待收货',
-    count: counts?.received || 0
-  }, {
-    icon: MessageCircle,
-    label: '待评价',
-    count: counts?.review || 0
-  }];
-  return <div className="bg-white p-4">
-      <h3 className="text-sm font-medium text-gray-900 mb-4">我的订单</h3>
-      <div className="flex justify-around">
-        {statuses.map((status, index) => <div key={index} className="text-center">
-            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-1">
-              <status.icon size={16} className="text-orange-600" />
-            </div>
-            <div className="text-xs text-gray-600">{status.label}</div>
-            {status.count > 0 && <div className="text-xs text-orange-600">{status.count}</div>}
-          </div>)}
-      </div>
-    </div>;
-}
-
-// 功能列表组件
-function FeatureList({
-  features,
-  onFeatureClick
-}) {
-  return <div className="bg-white">
-      {features.map((feature, index) => <div key={index}>
-          <div onClick={() => onFeatureClick(feature.id)} className="flex items-center p-4 border-b border-gray-100">
-            <div className="w-6 h-6 flex items-center justify-center">
-              <feature.icon size={20} className="text-gray-600" />
-            </div>
-            <span className="ml-3 text-sm text-gray-900 flex-1">{feature.title}</span>
-            <ChevronRight size={16} className="text-gray-400" />
-          </div>
-        </div>)}
-    </div>;
-}
-
-// 空状态组件
-function EmptyState({
-  icon: Icon,
-  title,
-  description
-}) {
-  return <div className="flex flex-col items-center justify-center py-20">
-      <Icon size={64} className="text-gray-300 mb-4" />
-      <p className="text-gray-500 text-lg mb-2">{title}</p>
-      <p className="text-gray-400 text-sm mb-6">{description}</p>
-      <button className="bg-orange-500 text-white px-6 py-2 rounded-full text-sm">
-        重新加载
-      </button>
-    </div>;
-}
-
-// 加载状态组件
-function LoadingState() {
-  return <div className="flex justify-center py-10">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-    </div>;
-}
-export default function ProfilePage(props) {
-  const {
-    $w
-  } = props;
-  const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({
-    points: 0,
-    favorites: 0,
-    history: 0,
-    orders: {
-      pending: 0,
-      shipping: 0,
-      received: 0,
-      review: 0
-    }
-  });
-  const [pointsHistory, setPointsHistory] = useState([]);
+// 数据加载Hook
+const useUserProfile = () => {
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('profile');
   const {
     toast
   } = useToast();
-
-  // 功能列表
-  const features = [{
-    id: 'orders',
-    icon: Package,
-    title: '我的订单'
-  }, {
-    id: 'favorites',
-    icon: Heart,
-    title: '我的收藏'
-  }, {
-    id: 'address',
-    icon: Package,
-    title: '收货地址'
-  }, {
-    id: 'points',
-    icon: Star,
-    title: '积分中心'
-  }, {
-    id: 'help',
-    icon: HelpCircle,
-    title: '帮助中心'
-  }, {
-    id: 'settings',
-    icon: Settings,
-    title: '设置'
-  }];
-
-  // 加载用户数据
-  const loadUserData = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const currentUser = $w.auth.currentUser;
-      if (!currentUser) {
-        setUser(null);
-        return;
-      }
-
-      // 加载用户资料
-      const userResult = await $w.cloud.callDataSource({
+      const res = await $w.cloud.callDataSource({
         dataSourceName: 'user_profile',
         methodName: 'wedaGetItemV2',
         params: {
           filter: {
             where: {
-              user_id: {
-                $eq: currentUser.userId
+              userId: {
+                $eq: $w.auth.currentUser?.userId || 'demo_user'
               }
             }
           },
@@ -225,62 +54,77 @@ export default function ProfilePage(props) {
           }
         }
       });
-      if (userResult) {
-        setUser(userResult);
+      setProfile(res);
+    } catch (err) {
+      setError(err.message);
+      toast({
+        title: '加载失败',
+        description: err.message,
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+  const updateProfile = useCallback(async data => {
+    try {
+      await $w.cloud.callDataSource({
+        dataSourceName: 'user_profile',
+        methodName: 'wedaUpdateV2',
+        params: {
+          data,
+          filter: {
+            where: {
+              userId: {
+                $eq: $w.auth.currentUser?.userId || 'demo_user'
+              }
+            }
+          }
+        }
+      });
+      await loadProfile();
+      toast({
+        title: '更新成功'
+      });
+    } catch (error) {
+      toast({
+        title: '更新失败',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  }, [loadProfile, toast]);
+  return {
+    profile,
+    loading,
+    error,
+    loadProfile,
+    updateProfile
+  };
+};
 
-        // 设置统计数据
-        setStats({
-          points: userResult.points || 0,
-          favorites: userResult.favorites_count || 0,
-          history: userResult.history_count || 0,
-          orders: userResult.order_stats || {
-            pending: 0,
-            shipping: 0,
-            received: 0,
-            review: 0
-          }
-        });
-      } else {
-        // 如果没有用户资料，创建默认数据
-        const defaultUser = {
-          user_id: currentUser.userId,
-          nickname: currentUser.name || currentUser.nickName || '用户',
-          avatar_url: currentUser.avatarUrl || '',
-          points: 0,
-          favorites_count: 0,
-          history_count: 0,
-          level: '普通会员',
-          is_vip: false,
-          order_stats: {
-            pending: 0,
-            shipping: 0,
-            received: 0,
-            review: 0
-          }
-        };
-        setUser(defaultUser);
-        setStats({
-          points: 0,
-          favorites: 0,
-          history: 0,
-          orders: {
-            pending: 0,
-            shipping: 0,
-            received: 0,
-            review: 0
-          }
-        });
-      }
-
-      // 加载积分历史
-      const pointsResult = await $w.cloud.callDataSource({
+// 积分历史Hook
+const usePointsHistory = () => {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const {
+    toast
+  } = useToast();
+  const loadHistory = useCallback(async (isRefresh = false) => {
+    try {
+      setLoading(true);
+      const currentPage = isRefresh ? 1 : page;
+      const res = await $w.cloud.callDataSource({
         dataSourceName: 'points_history',
         methodName: 'wedaGetRecordsV2',
         params: {
           filter: {
             where: {
-              user_id: {
-                $eq: currentUser.userId
+              userId: {
+                $eq: $w.auth.currentUser?.userId || 'demo_user'
               }
             }
           },
@@ -288,88 +132,356 @@ export default function ProfilePage(props) {
             $master: true
           },
           orderBy: [{
-            created_at: 'desc'
+            createdAt: 'desc'
           }],
-          pageSize: 5
+          pageNumber: currentPage,
+          pageSize: 15,
+          getCount: true
         }
       });
-      if (pointsResult.records) {
-        setPointsHistory(pointsResult.records);
+      const newData = res.records || [];
+      if (isRefresh) {
+        setHistory(newData);
+      } else {
+        setHistory(prev => [...prev, ...newData]);
       }
-    } catch (error) {
-      console.error('加载用户数据失败:', error);
-      setError(error.message || '加载失败');
+      setTotal(res.total || 0);
+      setHasMore(newData.length === 15 && currentPage * 15 < res.total);
+      setPage(currentPage + 1);
+    } catch (err) {
       toast({
         title: '加载失败',
-        description: '无法加载用户数据，请稍后重试',
+        description: err.message,
         variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
+  }, [page, toast]);
+  const refresh = useCallback(() => {
+    setPage(1);
+    setHasMore(true);
+    loadHistory(true);
+  }, [loadHistory]);
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      loadHistory();
+    }
+  }, [loading, hasMore, loadHistory]);
+  return {
+    history,
+    loading,
+    hasMore,
+    total,
+    refresh,
+    loadMore
   };
+};
 
-  // 处理功能点击
-  const handleFeatureClick = featureId => {
-    console.log('点击功能:', featureId);
-    // 跳转到对应页面
-    // $w.utils.navigateTo({ 
-    //   pageId: featureId 
-    // });
-  };
+// 头像上传组件
+function AvatarUpload({
+  currentAvatar,
+  onUpload
+}) {
+  const [uploading, setUploading] = useState(false);
+  const {
+    toast
+  } = useToast();
+  const handleUpload = useCallback(async file => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: '请选择图片文件',
+        variant: 'destructive'
+      });
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: '图片大小不能超过2MB',
+        variant: 'destructive'
+      });
+      return;
+    }
+    try {
+      setUploading(true);
+      // 上传到云存储
+      const cloud = await $w.cloud.getCloudInstance();
+      const uploadRes = await cloud.uploadFile({
+        cloudPath: `avatars/${Date.now()}-${file.name}`,
+        file
+      });
+      const avatarUrl = uploadRes.fileID;
+      await onUpload({
+        avatar: avatarUrl
+      });
+      toast({
+        title: '头像上传成功'
+      });
+    } catch (error) {
+      toast({
+        title: '上传失败',
+        description: error.message,
+        variant: 'destructive'
+      });
+    } finally {
+      setUploading(false);
+    }
+  }, [onUpload, toast]);
+  const handleFileSelect = useCallback(() => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = e => {
+      const file = e.target.files[0];
+      handleUpload(file);
+    };
+    input.click();
+  }, [handleUpload]);
+  return <div className="relative group">
+      <Avatar className="w-24 h-24 cursor-pointer">
+        <AvatarImage src={processImageUrl(currentAvatar)} alt="用户头像" />
+        <AvatarFallback>
+          <User className="w-12 h-12" />
+        </AvatarFallback>
+      </Avatar>
+      <button onClick={handleFileSelect} disabled={uploading} className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-full flex items-center justify-center transition-all">
+        <Camera className="w-6 h-6 text-white opacity-0 group-hover:opacity-100" />
+      </button>
+      {uploading && <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+        </div>}
+    </div>;
+}
 
-  // 处理编辑资料
-  const handleEditProfile = () => {
-    // $w.utils.navigateTo({ 
-    //   pageId: 'editProfile' 
-    // });
-  };
+// 编辑资料弹窗
+function EditProfileModal({
+  profile,
+  onSave,
+  open,
+  onOpenChange
+}) {
+  const [nickname, setNickname] = useState(profile?.nickname || '');
+  const [phone, setPhone] = useState(profile?.phone || '');
+  const [email, setEmail] = useState(profile?.email || '');
+  const [saving, setSaving] = useState(false);
+  const {
+    toast
+  } = useToast();
+  const handleSave = useCallback(async () => {
+    if (!nickname.trim()) {
+      toast({
+        title: '请输入昵称',
+        variant: 'destructive'
+      });
+      return;
+    }
+    try {
+      setSaving(true);
+      await onSave({
+        nickname: nickname.trim(),
+        phone: phone.trim(),
+        email: email.trim()
+      });
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: '保存失败',
+        description: error.message,
+        variant: 'destructive'
+      });
+    } finally {
+      setSaving(false);
+    }
+  }, [nickname, phone, email, onSave, onOpenChange, toast]);
+  return <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>编辑个人资料</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">昵称</label>
+            <input type="text" value={nickname} onChange={e => setNickname(e.target.value)} className="w-full px-3 py-2 border rounded-md" placeholder="请输入昵称" maxLength={20} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">手机号</label>
+            <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-3 py-2 border rounded-md" placeholder="请输入手机号" maxLength={11} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">邮箱</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2 border rounded-md" placeholder="请输入邮箱" />
+          </div>
+        </div>
+        <div className="flex gap-3 mt-6">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>取消</Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? '保存中...' : '保存'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>;
+}
 
-  // 初始加载
+// 骨架屏组件
+const ProfileSkeleton = () => <div className="p-4 space-y-4">
+    <Card className="animate-pulse">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-4">
+          <div className="w-24 h-24 bg-gray-200 rounded-full" />
+          <div className="space-y-2">
+            <div className="h-6 bg-gray-200 rounded w-32" />
+            <div className="h-4 bg-gray-200 rounded w-24" />
+            <div className="h-4 bg-gray-200 rounded w-20" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+    <Card className="animate-pulse">
+      <CardContent className="p-4">
+        <div className="h-4 bg-gray-200 rounded w-24 mb-4" />
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => <div key={i} className="h-12 bg-gray-200 rounded" />)}
+        </div>
+      </CardContent>
+    </Card>
+  </div>;
+
+// 错误状态组件
+const ErrorState = ({
+  message,
+  onRetry
+}) => <div className="flex flex-col items-center justify-center py-12">
+    <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+    <p className="text-gray-500 mb-4">{message}</p>
+    <Button variant="outline" onClick={onRetry}>
+      <RefreshCw className="w-4 h-4 mr-2" />
+      重新加载
+    </Button>
+  </div>;
+export default function Profile(props) {
+  const {
+    $w
+  } = props;
+  const [activeTab, setActiveTab] = useState('profile');
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // 使用自定义Hook加载数据
+  const userProfile = useUserProfile();
+  const pointsHistory = usePointsHistory();
+
+  // 下拉刷新
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([userProfile.loadProfile(), pointsHistory.refresh()]);
+    setRefreshing(false);
+  }, [userProfile, pointsHistory]);
+
+  // 页面加载
   useEffect(() => {
-    loadUserData();
+    handleRefresh();
   }, []);
 
-  // 渲染内容
-  const renderContent = () => {
-    if (loading) {
-      return <div className="space-y-4">
-          <div className="h-48 bg-gray-200 animate-pulse"></div>
-          <div className="px-4">
-            <div className="h-20 bg-gray-200 rounded mb-4 animate-pulse"></div>
-            <div className="h-32 bg-gray-200 rounded mb-4 animate-pulse"></div>
-            <div className="h-40 bg-gray-200 rounded animate-pulse"></div>
-          </div>
-        </div>;
+  // 渲染用户信息
+  const renderUserInfo = () => {
+    if (userProfile.loading) {
+      return <ProfileSkeleton />;
     }
-    if (error) {
-      return <EmptyState icon={User} title="加载失败" description={error} />;
+    if (userProfile.error) {
+      return <ErrorState message={userProfile.error} onRetry={userProfile.loadProfile} />;
     }
-    return <div>
-        {/* 个人中心头部 */}
-        <ProfileHeaderComponent user={user} stats={stats} onEditProfile={handleEditProfile} />
+    if (!userProfile.profile) {
+      return <ErrorState message="用户信息加载失败" onRetry={userProfile.loadProfile} />;
+    }
+    const {
+      profile
+    } = userProfile;
+    return <div className="space-y-4">
+        {/* 用户信息卡片 */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <AvatarUpload currentAvatar={profile.avatar} onUpload={userProfile.updateProfile} />
+              <div className="flex-1">
+                <h2 className="text-xl font-bold">{profile.nickname || '未设置昵称'}</h2>
+                <p className="text-sm text-gray-500">{profile.phone || '未绑定手机号'}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="secondary">Lv.{profile.level || 1}</Badge>
+                  <Badge variant="outline">{profile.points || 0} 积分</Badge>
+                </div>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setEditModalOpen(true)}>
+                <Edit3 className="w-4 h-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* 订单状态 */}
-        <div className="mx-4 mt-4">
-          <OrderStatus counts={stats.orders} />
+        {/* 功能卡片 */}
+        <div className="grid grid-cols-2 gap-4">
+          <FeatureCard icon={Gift} title="我的积分" value={profile.points || 0} subtitle="可用积分" onClick={() => $w.utils.navigateTo({
+          pageId: 'pointsDetail'
+        })} />
+          <FeatureCard icon={History} title="积分记录" value={pointsHistory.total} subtitle="历史记录" onClick={() => $w.utils.navigateTo({
+          pageId: 'pointsHistory'
+        })} />
         </div>
 
-        {/* 功能列表 */}
-        <div className="mx-4 mt-4">
-          <FeatureList features={features} onFeatureClick={handleFeatureClick} />
-        </div>
+        {/* 设置选项 */}
+        <Card>
+          <CardContent className="p-4 space-y-4">
+            <Button variant="ghost" className="w-full justify-start" onClick={() => $w.utils.navigateTo({
+            pageId: 'addressList'
+          })}>
+              <MapPin className="w-4 h-4 mr-2" />
+              收货地址管理
+            </Button>
+            <Button variant="ghost" className="w-full justify-start" onClick={() => $w.utils.navigateTo({
+            pageId: 'settings'
+          })}>
+              <Settings className="w-4 h-4 mr-2" />
+              账号设置
+            </Button>
+            <Button variant="ghost" className="w-full justify-start text-red-600" onClick={() => {
+            // 退出登录逻辑
+            $w.utils.navigateTo({
+              pageId: 'login'
+            });
+          }}>
+              <LogOut className="w-4 h-4 mr-2" />
+              退出登录
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* 积分历史 */}
-        <div className="mx-4 mt-4">
-          <PointsHistory points={stats.points} history={pointsHistory} />
-        </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold">积分明细</h3>
+              <Button variant="ghost" size="sm" onClick={() => $w.utils.navigateTo({
+              pageId: 'pointsHistory'
+            })}>
+                查看全部
+              </Button>
+            </div>
+            <PointsHistory data={pointsHistory.history.slice(0, 5)} loading={pointsHistory.loading} onLoadMore={pointsHistory.loadMore} hasMore={pointsHistory.hasMore} />
+          </CardContent>
+        </Card>
       </div>;
   };
-  return <div className="min-h-screen bg-gray-50 pb-16">
-      {/* 主要内容 */}
-      {renderContent()}
+  return <div className="min-h-screen bg-gray-50">
+      {/* 下拉刷新指示器 */}
+      {refreshing && <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-2">
+          正在刷新...
+        </div>}
 
-      {/* 底部导航栏 */}
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="p-4">
+        {renderUserInfo()}
+      </div>
+
+      {/* 编辑资料弹窗 */}
+      <EditProfileModal profile={userProfile.profile} onSave={userProfile.updateProfile} open={editModalOpen} onOpenChange={setEditModalOpen} />
     </div>;
 }

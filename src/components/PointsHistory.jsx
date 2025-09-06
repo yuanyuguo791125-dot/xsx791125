@@ -1,50 +1,87 @@
 // @ts-ignore;
 import React from 'react';
 // @ts-ignore;
+import { Card, CardContent, Badge, Button } from '@/components/ui';
+// @ts-ignore;
 import { TrendingUp, TrendingDown, Gift, ShoppingBag } from 'lucide-react';
 
+// 积分类型配置
+const POINTS_TYPE_CONFIG = {
+  earn: {
+    label: '获得',
+    color: 'success',
+    icon: TrendingUp
+  },
+  spend: {
+    label: '使用',
+    color: 'destructive',
+    icon: TrendingDown
+  },
+  refund: {
+    label: '退回',
+    color: 'info',
+    icon: Gift
+  },
+  order: {
+    label: '购物',
+    color: 'primary',
+    icon: ShoppingBag
+  }
+};
 export function PointsHistory({
-  history
+  data = [],
+  loading = false,
+  onLoadMore,
+  hasMore = false
 }) {
-  const getIcon = type => {
-    switch (type) {
-      case 'earn':
-        return <TrendingUp size={16} className="text-green-600" />;
-      case 'spend':
-        return <TrendingDown size={16} className="text-red-600" />;
-      case 'gift':
-        return <Gift size={16} className="text-purple-600" />;
-      default:
-        return <ShoppingBag size={16} className="text-blue-600" />;
-    }
-  };
-  const getColor = type => {
-    switch (type) {
-      case 'earn':
-        return 'text-green-600';
-      case 'spend':
-        return 'text-red-600';
-      default:
-        return 'text-gray-900';
-    }
-  };
-  return <div className="bg-white rounded-lg p-4">
-      <h3 className="font-medium text-gray-900 mb-3">积分明细</h3>
-      <div className="space-y-3">
-        {history.map((item, index) => <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                {getIcon(item.type)}
+  if (loading && data.length === 0) {
+    return <div className="space-y-3">
+        {[...Array(3)].map((_, i) => <Card key={i} className="animate-pulse">
+            <CardContent className="p-3">
+              <div className="flex justify-between items-center">
+                <div className="space-y-1">
+                  <div className="h-4 bg-gray-200 rounded w-32" />
+                  <div className="h-3 bg-gray-200 rounded w-24" />
+                </div>
+                <div className="h-4 bg-gray-200 rounded w-16" />
               </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">{item.title}</p>
-                <p className="text-xs text-gray-500">{item.time}</p>
+            </CardContent>
+          </Card>)}
+      </div>;
+  }
+  if (data.length === 0) {
+    return <div className="text-center py-8">
+        <Gift className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+        <p className="text-gray-500">暂无积分记录</p>
+      </div>;
+  }
+  return <div className="space-y-3">
+      {data.map((item, index) => {
+      const config = POINTS_TYPE_CONFIG[item.type] || POINTS_TYPE_CONFIG.earn;
+      const Icon = config.icon;
+      return <Card key={item._id || index} className="hover:shadow-sm transition-shadow">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg bg-${config.color}-100`}>
+                <Icon className={`w-4 h-4 text-${config.color}-600`} />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-sm">{item.description}</p>
+                <p className="text-xs text-gray-500">{new Date(item.createdAt).toLocaleString()}</p>
+              </div>
+              <div className="text-right">
+                <Badge variant={config.color} className={item.points > 0 ? 'text-green-600' : 'text-red-600'}>
+                  {item.points > 0 ? '+' : ''}{item.points}
+                </Badge>
               </div>
             </div>
-            <span className={`text-sm font-medium ${getColor(item.type)}`}>
-              {item.type === 'earn' ? '+' : '-'}{item.points}
-            </span>
-          </div>)}
-      </div>
+          </CardContent>
+        </Card>;
+    })}
+      {hasMore && <div className="text-center pt-4">
+        <Button variant="outline" size="sm" onClick={onLoadMore} disabled={loading}>
+          {loading ? '加载中...' : '加载更多'}
+        </Button>
+      </div>}
     </div>;
 }
