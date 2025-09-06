@@ -1,17 +1,9 @@
 
 {
-  "description": "电商小程序项目配置",
+  "description": "学习用品商城小程序",
   "packOptions": {
-    "ignore": [
-      {
-        "type": "file",
-        "value": ".eslintrc.js"
-      },
-      {
-        "type": "folder",
-        "value": "node_modules"
-      }
-    ]
+    "ignore": [],
+    "include": []
   },
   "setting": {
     "urlCheck": false,
@@ -49,19 +41,22 @@
     "disableUseStrict": false,
     "minifyWXML": true,
     "showES6CompileOption": false,
-    "useCompilerPlugins": false
+    "useCompilerPlugins": false,
+    "ignoreUploadUnusedFiles": true
   },
   "compileType": "miniprogram",
   "libVersion": "2.19.4",
-  "appid": "your-app-id",
-  "projectname": "ecommerce-miniprogram",
+  "appid": "wx1234567890abcdef",
+  "projectname": "learning-supplies-mall",
   "debugOptions": {
     "hidedInDevtools": []
   },
   "scripts": {},
+  "staticServerOptions": {
+    "baseURL": "",
+    "servePath": ""
+  },
   "isGameTourist": false,
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
   "condition": {
     "search": {
       "list": []
@@ -81,5 +76,9 @@
     "miniprogram": {
       "list": []
     }
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
   }
 }

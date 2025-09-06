@@ -1,0 +1,119 @@
+
+<!--pages/home/home.wxml-->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input" bindtap="onSearch">
+      <text class="search-placeholder">搜索商品、品牌</text>
+      <image class="search-icon" src="/images/search.png" />
+    </view>
+  </view>
+
+  <!-- 轮播图 -->
+  <view class="banner-section" wx:if="{{banners.length > 0}}">
+    <swiper class="banner-swiper" indicator-dots="true" autoplay="true" interval="3000" duration="500">
+      <swiper-item wx:for="{{banners}}" wx:key="_id" bindtap="onBannerTap" data-banner="{{item}}">
+        <image class="banner-image" src="{{item.image_url}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 分类导航 -->
+  <view class="category-section" wx:if="{{categories.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">商品分类</text>
+    </view>
+    <view class="category-grid">
+      <view class="category-item" wx:for="{{categories}}" wx:key="_id" bindtap="onCategoryTap" data-category="{{item}}">
+        <image class="category-icon" src="{{item.icon}}" mode="aspectFit" />
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门推荐 -->
+  <view class="product-section" wx:if="{{hotProducts.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">热门推荐</text>
+      <text class="section-more" bindtap="onMoreHot">查看更多</text>
+    </view>
+    <view class="product-grid">
+      <view class="product-card" wx:for="{{hotProducts}}" wx:key="_id" bindtap="onProductTap" data-product="{{item}}">
+        <image class="product-image" src="{{item.main_image}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-price">
+            <text class="current-price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.original_price > item.price}}">¥{{item.original_price}}</text>
+          </view>
+          <view class="product-meta">
+            <text class="sales">已售{{item.sales}}</text>
+            <text class="rating" wx:if="{{item.rating > 0}}">{{item.rating}}分</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 新品上市 -->
+  <view class="product-section" wx:if="{{newProducts.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">新品上市</text>
+      <text class="section-more" bindtap="onMoreNew">查看更多</text>
+    </view>
+    <view class="product-grid">
+      <view class="product-card" wx:for="{{newProducts}}" wx:key="_id" bindtap="onProductTap" data-product="{{item}}">
+        <image class="product-image" src="{{item.main_image}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-price">
+            <text class="current-price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.original_price > item.price}}">¥{{item.original_price}}</text>
+          </view>
+          <view class="product-meta">
+            <text class="sales">已售{{item.sales}}</text>
+            <text class="new-tag">新品</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 猜你喜欢 -->
+  <view class="product-section" wx:if="{{products.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">猜你喜欢</text>
+      <text class="section-more" bindtap="onMoreProducts">查看更多</text>
+    </view>
+    <view class="product-grid">
+      <view class="product-card" wx:for="{{products}}" wx:key="_id" bindtap="onProductTap" data-product="{{item}}">
+        <image class="product-image" src="{{item.main_image}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-price">
+            <text class="current-price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.original_price > item.price}}">¥{{item.original_price}}</text>
+          </view>
+          <view class="product-meta">
+            <text class="sales">已售{{item.sales}}</text>
+            <text class="rating" wx:if="{{item.rating > 0}}">{{item.rating}}分</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+  <view class="no-more" wx:if="{{!hasMore && products.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && products.length === 0}}">
+    <image class="empty-icon" src="/images/empty.png" />
+    <text class="empty-text">暂无商品</text>
+  </view>
+</view>

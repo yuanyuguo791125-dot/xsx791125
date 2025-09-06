@@ -1,8 +1,8 @@
 
 {
-  "name": "getProductDetail",
+  "name": "updateCart",
   "version": "1.0.0",
-  "description": "获取商品详情",
+  "description": "更新购物车",
   "main": "index.js",
   "dependencies": {
     "wx-server-sdk": "~2.6.3"
