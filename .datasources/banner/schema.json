@@ -4,7 +4,7 @@
   "title": "轮播图",
   "schemas": [
     {
-      "name": "image_url",
+      "name": "imageUrl",
       "title": "图片地址",
       "type": "String"
     },
@@ -19,19 +19,57 @@
       "type": "String"
     },
     {
-      "name": "link_url",
+      "name": "linkUrl",
       "title": "跳转链接",
       "type": "String"
     },
     {
-      "name": "sort_order",
+      "name": "sortOrder",
       "title": "排序",
       "type": "Number"
     },
     {
-      "name": "is_active",
-      "title": "是否启用",
-      "type": "Boolean"
+      "name": "status",
+      "title": "状态",
+      "type": "String"
+    },
+    {
+      "name": "backgroundColor",
+      "title": "背景色",
+      "type": "String"
+    },
+    {
+      "name": "textColor",
+      "title": "文字颜色",
+      "type": "String"
+    },
+    {
+      "name": "startTime",
+      "title": "开始时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "endTime",
+      "title": "结束时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "position",
+      "title": "位置",
+      "type": "String"
+    },
+    {
+      "name": "width",
+      "title": "宽度",
+      "type": "Number"
+    },
+    {
+      "name": "height",
+      "title": "高度",
+      "type": "Number"
     }
   ]
 }
+  

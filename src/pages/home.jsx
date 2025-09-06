@@ -1,215 +1,433 @@
 // @ts-ignore;
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // @ts-ignore;
-import { Card, CardContent, Badge, Button, useToast } from '@/components/ui';
+import { Card, CardContent, Button, useToast, Badge } from '@/components/ui';
 // @ts-ignore;
-import { Search, ShoppingCart, Users } from 'lucide-react';
+import { ShoppingBag, Gift, Clock, Users, RefreshCw, AlertCircle } from 'lucide-react';
 
 // @ts-ignore;
-import { LazyImage } from '@/components/LazyImage';
+import { Carousel } from '@/components/Carousel';
 // @ts-ignore;
-import { SkeletonLoader } from '@/components/SkeletonLoader';
+import { CategoryCard } from '@/components/CategoryCard';
 // @ts-ignore;
-import { VirtualizedList } from '@/components/VirtualizedList';
-const ProductCard = memo(({
-  product,
-  onAddToCart
-}) => {
-  return <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <LazyImage src={product.image} alt={product.name} className="w-full h-48 object-cover" />
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-2xl font-bold text-blue-600">¥{product.price}</span>
-          <Badge variant="secondary">{product.sales || 0}人已购</Badge>
-        </div>
-        <Button className="w-full" onClick={() => onAddToCart(product)} size="sm">
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          加入购物车
-        </Button>
-      </CardContent>
-    </Card>;
-});
-const BannerCarousel = memo(({
-  banners
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [banners.length]);
-  return <div className="relative h-48 overflow-hidden rounded-lg">
-      {banners.map((banner, index) => <LazyImage key={banner._id} src={banner.image} alt={banner.title} className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`} />)}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {banners.map((_, index) => <div key={index} className={`w-2 h-2 rounded-full ${index === currentIndex ? 'bg-white' : 'bg-white/50'}`} />)}
-      </div>
-    </div>;
-});
-const CategoryCard = memo(({
-  category,
-  onClick
-}) => {
-  return <Card className="text-center p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={onClick}>
-      <LazyImage src={category.icon || 'https://via.placeholder.com/48'} alt={category.name} className="w-12 h-12 mx-auto mb-2" />
-      <p className="text-sm font-medium">{category.name}</p>
-    </Card>;
-});
+import { ProductCard } from '@/components/ProductCard';
+// @ts-ignore;
+import { GroupCard } from '@/components/GroupCard';
+// @ts-ignore;
+import { TabBar } from '@/components/TabBar';
+// @ts-ignore;
+import { CountdownTimer } from '@/components/CountdownTimer';
+
+// 图片路径处理
+const processImageUrl = url => {
+  if (!url) return 'https://via.placeholder.com/400x200?text=No+Image';
+  if (url.startsWith('cloud://')) {
+    return url.replace('cloud://', 'https://your-cdn.com/');
+  }
+  if (url.startsWith('/')) {
+    return `https://your-cdn.com${url}`;
+  }
+  return url;
+};
+
+// 数据加载Hook
+const useHomeData = () => {
+  const [banners, setBanners] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const {
+    toast
+  } = useToast();
+
+  // 加载banner数据
+  const loadBanners = useCallback(async () => {
+    try {
+      const res = await $w.cloud.callDataSource({
+        dataSourceName: 'banner',
+        methodName: 'wedaGetRecordsV2',
+        params: {
+          filter: {
+            where: {
+              status: {
+                $eq: 'active'
+              }
+            }
+          },
+          select: {
+            $master: true
+          },
+          orderBy: [{
+            sortOrder: 'asc'
+          }],
+          pageSize: 10
+        }
+      });
+
+      // 安全处理banner数据
+      const bannerData = (res.records || []).map(banner => ({
+        id: banner._id,
+        title: banner.title || 'Banner标题',
+        imageUrl: banner.imageUrl || '',
+        linkUrl: banner.linkUrl || '#',
+        sortOrder: banner.sortOrder || 0
+      }));
+      setBanners(bannerData);
+    } catch (err) {
+      console.error('Banner加载失败:', err);
+      toast({
+        title: 'Banner加载失败',
+        description: err.message,
+        variant: 'destructive'
+      });
+      // 使用默认banner
+      setBanners([{
+        id: 'default-1',
+        title: '默认Banner1',
+        imageUrl: 'https://via.placeholder.com/400x200?text=Banner+1',
+        linkUrl: '#',
+        sortOrder: 1
+      }, {
+        id: 'default-2',
+        title: '默认Banner2',
+        imageUrl: 'https://via.placeholder.com/400x200?text=Banner+2',
+        linkUrl: '#',
+        sortOrder: 2
+      }]);
+    }
+  }, [toast]);
+
+  // 加载分类数据
+  const loadCategories = useCallback(async () => {
+    try {
+      const res = await $w.cloud.callDataSource({
+        dataSourceName: 'product_category',
+        methodName: 'wedaGetRecordsV2',
+        params: {
+          filter: {
+            where: {
+              status: {
+                $eq: 'active'
+              }
+            }
+          },
+          select: {
+            $master: true
+          },
+          orderBy: [{
+            sortOrder: 'asc'
+          }],
+          pageSize: 8
+        }
+      });
+      const categoryData = (res.records || []).map(category => ({
+        id: category._id,
+        name: category.name || '分类名称',
+        icon: category.icon || '',
+        sortOrder: category.sortOrder || 0
+      }));
+      setCategories(categoryData);
+    } catch (err) {
+      console.error('分类加载失败:', err);
+      // 使用默认分类
+      setCategories([{
+        id: '1',
+        name: '热门推荐',
+        icon: '🔥',
+        sortOrder: 1
+      }, {
+        id: '2',
+        name: '新品上市',
+        icon: '✨',
+        sortOrder: 2
+      }, {
+        id: '3',
+        name: '限时特惠',
+        icon: '⏰',
+        sortOrder: 3
+      }, {
+        id: '4',
+        name: '品牌专区',
+        icon: '🏷️',
+        sortOrder: 4
+      }]);
+    }
+  }, []);
+
+  // 加载商品数据
+  const loadProducts = useCallback(async () => {
+    try {
+      const res = await $w.cloud.callDataSource({
+        dataSourceName: 'product',
+        methodName: 'wedaGetRecordsV2',
+        params: {
+          filter: {
+            where: {
+              status: {
+                $eq: 'active'
+              }
+            }
+          },
+          select: {
+            $master: true
+          },
+          orderBy: [{
+            sortOrder: 'asc'
+          }, {
+            createdAt: 'desc'
+          }],
+          pageSize: 6
+        }
+      });
+      const productData = (res.records || []).map(product => ({
+        id: product._id,
+        name: product.name || '商品名称',
+        image: product.image || '',
+        price: product.price || 0,
+        originalPrice: product.originalPrice || 0,
+        sales: product.sales || 0,
+        stock: product.stock || 0
+      }));
+      setProducts(productData);
+    } catch (err) {
+      console.error('商品加载失败:', err);
+    }
+  }, []);
+
+  // 加载拼团数据
+  const loadGroups = useCallback(async () => {
+    try {
+      const res = await $w.cloud.callDataSource({
+        dataSourceName: 'group_activity',
+        methodName: 'wedaGetRecordsV2',
+        params: {
+          filter: {
+            where: {
+              status: {
+                $eq: 'active'
+              },
+              endTime: {
+                $gte: new Date().getTime()
+              }
+            }
+          },
+          select: {
+            $master: true
+          },
+          orderBy: [{
+            sortOrder: 'asc'
+          }],
+          pageSize: 4
+        }
+      });
+      const groupData = (res.records || []).map(group => ({
+        id: group._id,
+        title: group.title || '拼团活动',
+        image: group.image || '',
+        price: group.price || 0,
+        originalPrice: group.originalPrice || 0,
+        endTime: group.endTime || Date.now() + 3600000,
+        participants: group.participants || 0,
+        target: group.target || 2
+      }));
+      setGroups(groupData);
+    } catch (err) {
+      console.error('拼团加载失败:', err);
+    }
+  }, []);
+
+  // 加载所有数据
+  const loadAllData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await Promise.all([loadBanners(), loadCategories(), loadProducts(), loadGroups()]);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [loadBanners, loadCategories, loadProducts, loadGroups]);
+  return {
+    banners,
+    categories,
+    products,
+    groups,
+    loading,
+    error,
+    loadAllData
+  };
+};
+
+// 骨架屏组件
+const HomeSkeleton = () => <div className="space-y-4 p-4">
+    {/* Banner骨架 */}
+    <div className="h-48 bg-gray-200 rounded-lg animate-pulse" />
+    
+    {/* 分类骨架 */}
+    <div className="grid grid-cols-4 gap-4">
+      {[...Array(8)].map((_, i) => <div key={i} className="text-center">
+          <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2" />
+          <div className="h-3 bg-gray-200 rounded w-12 mx-auto" />
+        </div>)}
+    </div>
+    
+    {/* 商品骨架 */}
+    <div className="grid grid-cols-2 gap-4">
+      {[...Array(4)].map((_, i) => <div key={i} className="bg-white rounded-lg p-3">
+          <div className="w-full h-32 bg-gray-200 rounded mb-2" />
+          <div className="h-4 bg-gray-200 rounded mb-1" />
+          <div className="h-3 bg-gray-200 rounded w-3/4 mb-2" />
+          <div className="flex justify-between">
+            <div className="h-4 bg-gray-200 rounded w-16" />
+            <div className="h-4 bg-gray-200 rounded w-12" />
+          </div>
+        </div>)}
+    </div>
+  </div>;
+
+// 错误状态组件
+const ErrorState = ({
+  message,
+  onRetry
+}) => <div className="flex flex-col items-center justify-center py-12">
+    <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+    <p className="text-gray-500 mb-4">{message}</p>
+    <Button variant="outline" onClick={onRetry}>
+      <RefreshCw className="w-4 h-4 mr-2" />
+      重新加载
+    </Button>
+  </div>;
 export default function Home(props) {
   const {
     $w
   } = props;
-  const [products, setProducts] = useState([]);
-  const [banners, setBanners] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('home');
+  const [refreshing, setRefreshing] = useState(false);
   const {
-    toast
-  } = useToast();
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const [productsRes, bannersRes, categoriesRes] = await Promise.all([$w.cloud.callDataSource({
-        dataSourceName: 'product',
-        methodName: 'wedaGetRecordsV2',
-        params: {
-          limit: 10,
-          orderBy: [{
-            sales: 'desc'
-          }],
-          select: {
-            $master: true
-          }
-        }
-      }), $w.cloud.callDataSource({
-        dataSourceName: 'banner',
-        methodName: 'wedaGetRecordsV2',
-        params: {
-          select: {
-            $master: true
-          }
-        }
-      }), $w.cloud.callDataSource({
-        dataSourceName: 'product_category',
-        methodName: 'wedaGetRecordsV2',
-        params: {
-          select: {
-            $master: true
-          }
-        }
-      })]);
-      setProducts(productsRes.records || []);
-      setBanners(bannersRes.records || []);
-      setCategories(categoriesRes.records || []);
-    } catch (error) {
-      toast({
-        title: "获取数据失败",
-        description: error.message,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    banners,
+    categories,
+    products,
+    groups,
+    loading,
+    error,
+    loadAllData
+  } = useHomeData();
+
+  // 下拉刷新
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadAllData();
+    setRefreshing(false);
+  }, [loadAllData]);
+
+  // 页面加载
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-  const handleAddToCart = useCallback(async product => {
-    try {
-      await $w.cloud.callDataSource({
-        dataSourceName: 'shopping_cart',
-        methodName: 'wedaCreateV2',
+    loadAllData();
+  }, [loadAllData]);
+
+  // 渲染Banner
+  const renderBanner = () => {
+    if (banners.length === 0) return null;
+    return <Carousel banners={banners.map(banner => ({
+      id: banner.id,
+      image: processImageUrl(banner.imageUrl),
+      title: banner.title,
+      link: banner.linkUrl
+    }))} />;
+  };
+
+  // 渲染分类
+  const renderCategories = () => {
+    if (categories.length === 0) return null;
+    return <div className="grid grid-cols-4 gap-4 p-4">
+        {categories.map(category => <CategoryCard key={category.id} name={category.name} icon={category.icon} onClick={() => $w.utils.navigateTo({
+        pageId: 'category',
         params: {
-          data: {
-            userId: $w.auth.currentUser?.userId || 'demo_user',
-            productId: product._id,
-            productName: product.name,
-            productImage: product.image,
-            price: product.price,
-            quantity: 1,
-            selected: true
-          }
+          categoryId: category.id
         }
-      });
-      toast({
-        title: "添加成功",
-        description: `${product.name} 已加入购物车`
-      });
-    } catch (error) {
-      toast({
-        title: "添加失败",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  }, []);
-  const handleCategoryClick = useCallback(category => {
-    $w.utils.navigateTo({
-      pageId: 'productList',
-      params: {
-        categoryId: category._id
-      }
-    });
-  }, []);
+      })} />)}
+      </div>;
+  };
+
+  // 渲染商品
+  const renderProducts = () => {
+    if (products.length === 0) return null;
+    return <div className="p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold">热门推荐</h2>
+          <Button variant="ghost" size="sm" onClick={() => $w.utils.navigateTo({
+          pageId: 'productList'
+        })}>
+            查看更多
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          {products.map(product => <ProductCard key={product.id} product={product} onClick={() => $w.utils.navigateTo({
+          pageId: 'productDetail',
+          params: {
+            productId: product.id
+          }
+        })} />)}
+        </div>
+      </div>;
+  };
+
+  // 渲染拼团
+  const renderGroups = () => {
+    if (groups.length === 0) return null;
+    return <div className="p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-bold">限时拼团</h2>
+          <CountdownTimer endTime={Math.min(...groups.map(g => g.endTime))} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          {groups.map(group => <GroupCard key={group.id} group={group} onClick={() => $w.utils.navigateTo({
+          pageId: 'groupDetail',
+          params: {
+            groupId: group.id
+          }
+        })} />)}
+        </div>
+      </div>;
+  };
+
+  // 渲染加载状态
   if (loading) {
-    return <div className="min-h-screen bg-gray-50 p-4">
-        <SkeletonLoader type="home" />
+    return <div className="min-h-screen bg-gray-50">
+        <HomeSkeleton />
+        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>;
   }
-  return <div className="min-h-screen bg-gray-50">
-      {/* 搜索栏 */}
-      <div className="sticky top-0 bg-white z-10 p-4 shadow-sm">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input type="text" placeholder="搜索商品..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-      </div>
 
-      <div className="p-4 space-y-6">
-        {/* 轮播图 */}
-        {banners.length > 0 && <BannerCarousel banners={banners} />}
+  // 渲染错误状态
+  if (error) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <ErrorState message={error} onRetry={loadAllData} />
+        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>;
+  }
+  return <div className="min-h-screen bg-gray-50 pb-20">
+      {/* 下拉刷新指示器 */}
+      {refreshing && <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-2">
+          正在刷新...
+        </div>}
 
-        {/* 分类导航 */}
-        <div className="grid grid-cols-4 gap-4">
-          {categories.slice(0, 8).map(category => <CategoryCard key={category._id} category={category} onClick={() => handleCategoryClick(category)} />)}
-        </div>
+      {/* Banner区域 */}
+      {renderBanner()}
 
-        {/* 热门商品 */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">热门推荐</h2>
-          <div className="grid grid-cols-2 gap-4">
-            {products.map(product => <ProductCard key={product._id} product={product} onAddToCart={handleAddToCart} />)}
-          </div>
-        </div>
+      {/* 分类导航 */}
+      {renderCategories()}
 
-        {/* 拼团活动 */}
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">限时拼团</h2>
-            <Button variant="ghost" onClick={() => $w.utils.navigateTo({
-            pageId: 'groupList'
-          })}>
-              查看更多
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {products.slice(0, 4).map(product => <Card key={product._id} className="overflow-hidden">
-                <LazyImage src={product.image} alt={product.name} className="w-full h-32 object-cover" />
-                <CardContent className="p-3">
-                  <h4 className="font-medium text-sm mb-1 line-clamp-1">{product.name}</h4>
-                  <div className="flex items-center justify-between">
-                    <span className="text-red-600 font-bold">¥{product.price}</span>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Users className="w-3 h-3 mr-1" />
-                      {product.sales || 0}人团
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>)}
-          </div>
-        </div>
-      </div>
+      {/* 拼团活动 */}
+      {renderGroups()}
+
+      {/* 热门商品 */}
+      {renderProducts()}
+
+      {/* 底部导航 */}
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
     </div>;
 }
