@@ -1,9 +1,9 @@
 // @ts-ignore;
 import React, { useState, useEffect, useCallback } from 'react';
 // @ts-ignore;
-import { Card, CardContent, Button, useToast, Badge } from '@/components/ui';
+import { Card, CardContent, Button, useToast, Badge, TabBar, TestIntegration } from '@/components/ui';
 // @ts-ignore;
-import { ShoppingBag, Gift, Clock, Users, RefreshCw, AlertCircle } from 'lucide-react';
+import { ShoppingBag, Gift, Clock, Users, RefreshCw, AlertCircle, PlayCircle } from 'lucide-react';
 
 // @ts-ignore;
 import { Carousel } from '@/components/Carousel';
@@ -13,8 +13,6 @@ import { CategoryCard } from '@/components/CategoryCard';
 import { ProductCard } from '@/components/ProductCard';
 // @ts-ignore;
 import { GroupCard } from '@/components/GroupCard';
-// @ts-ignore;
-import { TabBar } from '@/components/TabBar';
 // @ts-ignore;
 import { CountdownTimer } from '@/components/CountdownTimer';
 
@@ -315,12 +313,40 @@ const ErrorState = ({
       重新加载
     </Button>
   </div>;
+
+// 添加测试模式检测
+const TestModeIndicator = () => {
+  const [isTestMode, setIsTestMode] = useState(false);
+  useEffect(() => {
+    const checkTestMode = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      setIsTestMode(urlParams.has('test'));
+    };
+    checkTestMode();
+    window.addEventListener('popstate', checkTestMode);
+    return () => window.removeEventListener('popstate', checkTestMode);
+  }, []);
+  if (!isTestMode) return null;
+  return <div className="fixed top-4 right-4 z-50">
+      <Card className="bg-blue-500 text-white">
+        <CardContent className="p-2">
+          <div className="flex items-center gap-2">
+            <PlayCircle className="w-4 h-4" />
+            <span className="text-sm font-bold">测试模式</span>
+          </div>
+        </CardContent>
+      </Card>
+    </div>;
+};
+
+// 修改主组件添加测试支持
 export default function Home(props) {
   const {
     $w
   } = props;
   const [activeTab, setActiveTab] = useState('home');
   const [refreshing, setRefreshing] = useState(false);
+  const [isTestMode, setIsTestMode] = useState(false);
   const {
     banners,
     categories,
@@ -342,6 +368,17 @@ export default function Home(props) {
   useEffect(() => {
     loadAllData();
   }, [loadAllData]);
+
+  // 检测测试模式
+  useEffect(() => {
+    const checkTestMode = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      setIsTestMode(urlParams.has('test'));
+    };
+    checkTestMode();
+    window.addEventListener('popstate', checkTestMode);
+    return () => window.removeEventListener('popstate', checkTestMode);
+  }, []);
 
   // 渲染Banner
   const renderBanner = () => {
@@ -425,6 +462,8 @@ export default function Home(props) {
       </div>;
   }
   return <div className="min-h-screen bg-gray-50 pb-20">
+      <TestModeIndicator />
+      
       {/* 下拉刷新指示器 */}
       {refreshing && <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-2">
           正在刷新...
@@ -444,5 +483,8 @@ export default function Home(props) {
 
       {/* 底部导航 */}
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      {/* 测试面板 */}
+      {isTestMode && <TestIntegration />}
     </div>;
 }

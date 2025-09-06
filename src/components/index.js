@@ -20,3 +20,6 @@ export * from './PaymentMethodCard.jsx';
 export * from './PointsDeduction.jsx';
 export * from './CountdownTimer.jsx';
 export * from './OrderCard.jsx';
+export * from './TestRunner.jsx';
+export * from './PageTestSuite.jsx';
+export * from './TestIntegration.jsx';
