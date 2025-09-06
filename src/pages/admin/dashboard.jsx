@@ -1,217 +1,305 @@
 // @ts-ignore;
 import React, { useState, useEffect } from 'react';
 // @ts-ignore;
-import { Card, CardContent, CardHeader, CardTitle, Badge, Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
+import { Card, CardContent, Button, useToast, Badge, Tabs, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-ignore;
-import { Package, ShoppingCart, Users, TrendingUp, DollarSign, AlertCircle } from 'lucide-react';
+import { ShoppingBag, Users, DollarSign, TrendingUp, Package, AlertCircle } from 'lucide-react';
 
-const StatCard = ({
-  title,
-  value,
-  icon: Icon,
-  trend,
-  color
-}) => {
-  return <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <div className={`p-2 rounded-full ${color}`}>
-          <Icon className="h-4 w-4 text-white" />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {trend && <p className="text-xs text-muted-foreground">{trend}</p>}
-      </CardContent>
-    </Card>;
-};
-const RecentOrders = ({
-  orders
-}) => {
-  return <Card>
-      <CardHeader>
-        <CardTitle>最近订单</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {orders.map(order => <div key={order._id} className="flex items-center justify-between p-3 border rounded-lg">
-              <div>
-                <p className="font-medium">{order.orderNo}</p>
-                <p className="text-sm text-gray-500">{order.userName}</p>
-              </div>
-              <div className="text-right">
-                <p className="font-bold">¥{order.totalAmount}</p>
-                <Badge variant={order.status === 'paid' ? 'success' : 'secondary'}>
-                  {order.status}
-                </Badge>
-              </div>
-            </div>)}
-        </div>
-      </CardContent>
-    </Card>;
-};
-export default function AdminDashboard(props) {
-  const {
-    $w
-  } = props;
+// @ts-ignore;
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+// @ts-ignore;
+
+// 管理后台数据Hook
+const useAdminData = () => {
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalOrders: 0,
     totalUsers: 0,
-    todayRevenue: 0
+    totalRevenue: 0
   });
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const fetchDashboardData = async () => {
+  const {
+    toast
+  } = useToast();
+  const loadAdminData = async () => {
     try {
-      const [products, orders, users] = await Promise.all([$w.cloud.callDataSource({
+      setLoading(true);
+
+      // 获取统计数据
+      const [productRes, orderRes, userRes] = await Promise.all([$w.cloud.callDataSource({
         dataSourceName: 'product',
         methodName: 'wedaGetRecordsV2',
         params: {
-          getCount: true
+          getCount: true,
+          pageSize: 1
         }
       }), $w.cloud.callDataSource({
         dataSourceName: 'order',
         methodName: 'wedaGetRecordsV2',
         params: {
           getCount: true,
-          orderBy: [{
-            createdAt: 'desc'
-          }],
-          limit: 5
+          pageSize: 1
         }
       }), $w.cloud.callDataSource({
         dataSourceName: 'user_profile',
         methodName: 'wedaGetRecordsV2',
         params: {
-          getCount: true
+          getCount: true,
+          pageSize: 1
         }
       })]);
-      setStats({
-        totalProducts: products.total || 0,
-        totalOrders: orders.total || 0,
-        totalUsers: users.total || 0,
-        todayRevenue: 0 // 需要计算今日收入
+
+      // 获取收入统计
+      const revenueRes = await $w.cloud.callDataSource({
+        dataSourceName: 'order',
+        methodName: 'wedaGetRecordsV2',
+        params: {
+          filter: {
+            where: {
+              status: {
+                $in: ['paid', 'shipped', 'completed']
+              }
+            }
+          },
+          select: {
+            $master: true
+          }
+        }
       });
-      setRecentOrders(orders.records || []);
+      const totalRevenue = revenueRes.records.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+      setStats({
+        totalProducts: productRes.total || 0,
+        totalOrders: orderRes.total || 0,
+        totalUsers: userRes.total || 0,
+        totalRevenue
+      });
+
+      // 获取最近订单
+      const recentOrdersRes = await $w.cloud.callDataSource({
+        dataSourceName: 'order',
+        methodName: 'wedaGetRecordsV2',
+        params: {
+          select: {
+            $master: true
+          },
+          orderBy: [{
+            createdAt: 'desc'
+          }],
+          pageSize: 10
+        }
+      });
+      setRecentOrders(recentOrdersRes.records || []);
     } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
+      toast({
+        title: '数据加载失败',
+        description: error.message,
+        variant: 'destructive'
+      });
     } finally {
       setLoading(false);
     }
   };
+  return {
+    stats,
+    recentOrders,
+    loading,
+    loadAdminData
+  };
+};
+
+// 统计卡片组件
+const StatCard = ({
+  title,
+  value,
+  icon: Icon,
+  color = 'blue'
+}) => <Card>
+    <CardContent className="p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-2xl font-bold">{value}</p>
+        </div>
+        <div className={`p-3 rounded-full bg-${color}-100`}>
+          <Icon className={`w-6 h-6 text-${color}-600`} />
+        </div>
+      </div>
+    </CardContent>
+  </Card>;
+
+// 销售趋势图表
+const SalesChart = ({
+  data
+}) => <Card>
+    <CardContent className="p-6">
+      <h3 className="text-lg font-semibold mb-4">销售趋势</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="sales" fill="#3b82f6" />
+        </BarChart>
+      </ResponsiveContainer>
+    </CardContent>
+  </Card>;
+
+// 订单状态饼图
+const OrderStatusChart = ({
+  data
+}) => {
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  return <Card>
+      <CardContent className="p-6">
+        <h3 className="text-lg font-semibold mb-4">订单状态分布</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie data={data} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value">
+              {data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>;
+};
+
+// 最近订单列表
+const RecentOrdersList = ({
+  orders
+}) => <Card>
+    <CardContent className="p-6">
+      <h3 className="text-lg font-semibold mb-4">最近订单</h3>
+      <div className="space-y-3">
+        {orders.map(order => <div key={order._id} className="flex justify-between items-center p-3 border rounded">
+            <div>
+              <p className="font-medium">订单号: {order.orderId}</p>
+              <p className="text-sm text-gray-600">金额: ¥{order.totalAmount}</p>
+            </div>
+            <Badge variant={order.status === 'completed' ? 'default' : 'secondary'}>
+              {order.status}
+            </Badge>
+          </div>)}
+      </div>
+    </CardContent>
+  </Card>;
+export default function AdminDashboard(props) {
+  const {
+    $w
+  } = props;
+  const [activeTab, setActiveTab] = useState('overview');
+  const {
+    stats,
+    recentOrders,
+    loading,
+    loadAdminData
+  } = useAdminData();
+  const [salesData, setSalesData] = useState([{
+    name: '周一',
+    sales: 4000
+  }, {
+    name: '周二',
+    sales: 3000
+  }, {
+    name: '周三',
+    sales: 5000
+  }, {
+    name: '周四',
+    sales: 2780
+  }, {
+    name: '周五',
+    sales: 1890
+  }, {
+    name: '周六',
+    sales: 2390
+  }, {
+    name: '周日',
+    sales: 3490
+  }]);
+  const [orderStatusData, setOrderStatusData] = useState([{
+    name: '待付款',
+    value: 400
+  }, {
+    name: '待发货',
+    value: 300
+  }, {
+    name: '已发货',
+    value: 300
+  }, {
+    name: '已完成',
+    value: 200
+  }]);
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    loadAdminData();
+  }, [loadAdminData]);
   if (loading) {
-    return <div className="min-h-screen bg-gray-50 p-6">
+    return <div className="p-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-6"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4" />
           <div className="grid grid-cols-4 gap-4 mb-6">
-            {[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-gray-200 rounded"></div>)}
+            {[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-gray-200 rounded" />)}
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[...Array(2)].map((_, i) => <div key={i} className="h-64 bg-gray-200 rounded" />)}
           </div>
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">管理后台</h1>
-        
-        {/* 统计卡片 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <StatCard title="商品总数" value={stats.totalProducts} icon={Package} color="bg-blue-500" trend="+12% from last month" />
-          <StatCard title="订单总数" value={stats.totalOrders} icon={ShoppingCart} color="bg-green-500" trend="+8% from last month" />
-          <StatCard title="用户总数" value={stats.totalUsers} icon={Users} color="bg-purple-500" trend="+5% from last month" />
-          <StatCard title="今日收入" value={`¥${stats.todayRevenue}`} icon={DollarSign} color="bg-orange-500" trend="+20% from yesterday" />
-        </div>
-
-        {/* 管理模块 */}
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">概览</TabsTrigger>
-            <TabsTrigger value="products">商品管理</TabsTrigger>
-            <TabsTrigger value="orders">订单管理</TabsTrigger>
-            <TabsTrigger value="users">用户管理</TabsTrigger>
-            <TabsTrigger value="content">内容管理</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RecentOrders orders={recentOrders} />
-              <Card>
-                <CardHeader>
-                  <CardTitle>快速操作</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Button className="w-full justify-start" onClick={() => $w.utils.navigateTo({
-                    pageId: 'adminProductList'
-                  })}>
-                      <Package className="mr-2 h-4 w-4" />
-                      商品列表
-                    </Button>
-                    <Button className="w-full justify-start" onClick={() => $w.utils.navigateTo({
-                    pageId: 'adminOrderList'
-                  })}>
-                      <ShoppingCart className="mr-2 h-4 w-4" />
-                      订单列表
-                    </Button>
-                    <Button className="w-full justify-start" onClick={() => $w.utils.navigateTo({
-                    pageId: 'adminBanner'
-                  })}>
-                      <AlertCircle className="mr-2 h-4 w-4" />
-                      轮播图管理
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="products">
-            <Card>
-              <CardHeader>
-                <CardTitle>商品管理</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">商品管理功能正在开发中...</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="orders">
-            <Card>
-              <CardHeader>
-                <CardTitle>订单管理</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">订单管理功能正在开发中...</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle>用户管理</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">用户管理功能正在开发中...</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="content">
-            <Card>
-              <CardHeader>
-                <CardTitle>内容管理</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">内容管理功能正在开发中...</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+  return <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold mb-2">管理后台</h1>
+        <p className="text-gray-600">欢迎使用电商管理后台</p>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="overview">总览</TabsTrigger>
+          <TabsTrigger value="products">商品管理</TabsTrigger>
+          <TabsTrigger value="orders">订单管理</TabsTrigger>
+          <TabsTrigger value="users">用户管理</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {activeTab === 'overview' && <div className="space-y-6 mt-6">
+          {/* 统计卡片 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard title="商品总数" value={stats.totalProducts} icon={Package} color="blue" />
+            <StatCard title="订单总数" value={stats.totalOrders} icon={ShoppingBag} color="green" />
+            <StatCard title="用户总数" value={stats.totalUsers} icon={Users} color="purple" />
+            <StatCard title="总收入" value={`¥${stats.totalRevenue.toFixed(2)}`} icon={DollarSign} color="orange" />
+          </div>
+
+          {/* 图表区域 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SalesChart data={salesData} />
+            <OrderStatusChart data={orderStatusData} />
+          </div>
+
+          {/* 最近订单 */}
+          <RecentOrdersList orders={recentOrders} />
+        </div>}
+
+      {activeTab === 'products' && <div className="mt-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">商品管理</h2>
+            <Button onClick={() => $w.utils.navigateTo({
+          pageId: 'admin/productList'
+        })}>
+              管理商品
+            </Button>
+          </div>
+        </div>}
+
+      {activeTab === 'orders' && <div className="mt-6">
+          <h2 className="text-xl font-semibold mb-4">订单管理</h2>
+          <p className="text-gray-600">订单管理功能开发中...</p>
+        </div>}
+
+      {activeTab === 'users' && <div className="mt-6">
+          <h2 className="text-xl font-semibold mb-4">用户管理</h2>
+          <p className="text-gray-600">用户管理功能开发中...</p>
+        </div>}
     </div>;
 }

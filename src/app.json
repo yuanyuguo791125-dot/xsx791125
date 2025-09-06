@@ -1,0 +1,68 @@
+
+{
+  "pages": [
+    "pages/home/home",
+    "pages/productDetail/productDetail",
+    "pages/cart/cart",
+    "pages/groupList/groupList",
+    "pages/orderList/orderList",
+    "pages/orderDetail/orderDetail",
+    "pages/payment/payment",
+    "pages/profile/profile",
+    "pages/admin/dashboard/dashboard",
+    "pages/admin/productList/productList"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "电商小程序",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#3cc51f",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "iconPath": "images/icon_home.png",
+        "selectedIconPath": "images/icon_home_HL.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/groupList/groupList",
+        "iconPath": "images/icon_group.png",
+        "selectedIconPath": "images/icon_group_HL.png",
+        "text": "拼团"
+      },
+      {
+        "pagePath": "pages/cart/cart",
+        "iconPath": "images/icon_cart.png",
+        "selectedIconPath": "images/icon_cart_HL.png",
+        "text": "购物车"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "images/icon_profile.png",
+        "selectedIconPath": "images/icon_profile_HL.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "cloud": true,
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "requiredBackgroundModes": ["audio", "location"],
+  "plugins": {
+    "chooseLocation": {
+      "version": "1.0",
+      "provider": "wx76a9a06e5b4e693e"
+    }
+  }
+}
