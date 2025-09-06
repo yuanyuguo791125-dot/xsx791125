@@ -41,6 +41,8 @@ const useHomeData = () => {
   const {
     toast
   } = useToast();
+
+  // 验证banner数据源
   const loadBanners = useCallback(async () => {
     try {
       setLoading(true);
@@ -66,8 +68,11 @@ const useHomeData = () => {
         }
       });
 
-      // 安全处理banner数据
-      const bannerData = (res.records || []).map(banner => ({
+      // 验证数据格式
+      if (!res || !Array.isArray(res.records)) {
+        throw new Error('Banner数据格式错误');
+      }
+      const bannerData = res.records.map(banner => ({
         id: banner._id,
         title: banner.title || 'Banner标题',
         imageUrl: banner.imageUrl || '',
@@ -75,31 +80,27 @@ const useHomeData = () => {
         sortOrder: banner.sortOrder || 0
       }));
       setBanners(bannerData);
+      console.log('✅ Banner数据源验证成功', bannerData.length, '条数据');
     } catch (err) {
-      console.error('Banner加载失败:', err);
+      console.error('❌ Banner数据源错误:', err);
       toast({
         title: 'Banner加载失败',
         description: err.message,
         variant: 'destructive'
       });
-      // 使用默认banner
+
+      // 使用默认数据
       setBanners([{
         id: 'default-1',
         title: '默认Banner1',
         imageUrl: 'https://via.placeholder.com/400x200?text=Banner+1',
         linkUrl: '#',
         sortOrder: 1
-      }, {
-        id: 'default-2',
-        title: '默认Banner2',
-        imageUrl: 'https://via.placeholder.com/400x200?text=Banner+2',
-        linkUrl: '#',
-        sortOrder: 2
       }]);
     }
   }, [toast]);
 
-  // 加载分类数据
+  // 验证商品分类数据源
   const loadCategories = useCallback(async () => {
     try {
       const res = await $w.cloud.callDataSource({
@@ -122,15 +123,19 @@ const useHomeData = () => {
           pageSize: 8
         }
       });
-      const categoryData = (res.records || []).map(category => ({
+      if (!res || !Array.isArray(res.records)) {
+        throw new Error('分类数据格式错误');
+      }
+      const categoryData = res.records.map(category => ({
         id: category._id,
         name: category.name || '分类名称',
         icon: category.icon || '📦',
         sortOrder: category.sortOrder || 0
       }));
       setCategories(categoryData);
+      console.log('✅ 分类数据源验证成功', categoryData.length, '条数据');
     } catch (err) {
-      console.error('分类加载失败:', err);
+      console.error('❌ 分类数据源错误:', err);
       // 使用默认分类
       setCategories([{
         id: '1',
@@ -156,7 +161,7 @@ const useHomeData = () => {
     }
   }, []);
 
-  // 加载商品数据
+  // 验证商品数据源
   const loadProducts = useCallback(async () => {
     try {
       const res = await $w.cloud.callDataSource({
@@ -181,7 +186,10 @@ const useHomeData = () => {
           pageSize: 6
         }
       });
-      const productData = (res.records || []).map(product => ({
+      if (!res || !Array.isArray(res.records)) {
+        throw new Error('商品数据格式错误');
+      }
+      const productData = res.records.map(product => ({
         id: product._id,
         name: product.name || '商品名称',
         image: product.image || '',
@@ -191,12 +199,13 @@ const useHomeData = () => {
         stock: product.stock || 0
       }));
       setProducts(productData);
+      console.log('✅ 商品数据源验证成功', productData.length, '条数据');
     } catch (err) {
-      console.error('商品加载失败:', err);
+      console.error('❌ 商品数据源错误:', err);
     }
   }, []);
 
-  // 加载拼团数据
+  // 验证拼团数据源
   const loadGroups = useCallback(async () => {
     try {
       const res = await $w.cloud.callDataSource({
@@ -222,7 +231,10 @@ const useHomeData = () => {
           pageSize: 4
         }
       });
-      const groupData = (res.records || []).map(group => ({
+      if (!res || !Array.isArray(res.records)) {
+        throw new Error('拼团数据格式错误');
+      }
+      const groupData = res.records.map(group => ({
         id: group._id,
         title: group.title || '拼团活动',
         image: group.image || '',
@@ -233,8 +245,9 @@ const useHomeData = () => {
         target: group.target || 2
       }));
       setGroups(groupData);
+      console.log('✅ 拼团数据源验证成功', groupData.length, '条数据');
     } catch (err) {
-      console.error('拼团加载失败:', err);
+      console.error('❌ 拼团数据源错误:', err);
     }
   }, []);
 
@@ -244,8 +257,10 @@ const useHomeData = () => {
     setError(null);
     try {
       await Promise.all([loadBanners(), loadCategories(), loadProducts(), loadGroups()]);
+      console.log('✅ 全链路数据加载完成');
     } catch (err) {
       setError(err.message);
+      console.error('❌ 数据加载失败:', err);
     } finally {
       setLoading(false);
     }

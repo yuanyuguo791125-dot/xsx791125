@@ -21,6 +21,8 @@ const useCartData = () => {
   const {
     toast
   } = useToast();
+
+  // 验证购物车数据源
   const loadCartData = useCallback(async () => {
     try {
       setLoading(true);
@@ -44,9 +46,10 @@ const useCartData = () => {
           }]
         }
       });
-
-      // 安全处理购物车数据
-      const cartData = (res.records || []).map(item => ({
+      if (!res || !Array.isArray(res.records)) {
+        throw new Error('购物车数据格式错误');
+      }
+      const cartData = res.records.map(item => ({
         id: item._id,
         productId: item.productId,
         quantity: item.quantity || 1,
@@ -54,6 +57,7 @@ const useCartData = () => {
         createdAt: item.createdAt
       }));
       setCartItems(cartData);
+      console.log('✅ 购物车数据源验证成功', cartData.length, '条数据');
     } catch (err) {
       setError(err.message);
       toast({
@@ -61,10 +65,13 @@ const useCartData = () => {
         description: err.message,
         variant: 'destructive'
       });
+      console.error('❌ 购物车数据源错误:', err);
     } finally {
       setLoading(false);
     }
   }, [toast]);
+
+  // 更新数量
   const updateQuantity = useCallback(async (cartId, newQuantity) => {
     try {
       await $w.cloud.callDataSource({
@@ -84,6 +91,7 @@ const useCartData = () => {
         }
       });
       await loadCartData();
+      console.log('✅ 购物车更新成功');
     } catch (err) {
       toast({
         title: '更新失败',
@@ -92,6 +100,8 @@ const useCartData = () => {
       });
     }
   }, [loadCartData, toast]);
+
+  // 移除商品
   const removeItem = useCallback(async cartId => {
     try {
       await $w.cloud.callDataSource({
@@ -111,6 +121,7 @@ const useCartData = () => {
       toast({
         title: '已移除商品'
       });
+      console.log('✅ 购物车商品移除成功');
     } catch (err) {
       toast({
         title: '移除失败',
@@ -213,6 +224,7 @@ export default function Cart(props) {
       <div className="p-4">
         {renderCartContent()}
       </div>
+      
       {cartItems.length > 0 && <CartSummary totalPrice={totalPrice} selectedCount={selectedItems.length} onCheckout={() => $w.utils.navigateTo({
       pageId: 'payment',
       params: {

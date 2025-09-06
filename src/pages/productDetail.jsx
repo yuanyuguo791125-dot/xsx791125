@@ -26,7 +26,7 @@ const useProductDetail = productId => {
       setLoading(true);
       setError(null);
 
-      // 并行加载商品详情和库存信息
+      // 验证商品详情数据源
       const [productRes, inventoryRes] = await Promise.all([$w.cloud.callDataSource({
         dataSourceName: 'product_detail',
         methodName: 'wedaGetItemV2',
@@ -58,7 +58,11 @@ const useProductDetail = productId => {
           }
         }
       })]);
-      // 安全处理商品数据
+
+      // 验证商品数据
+      if (!productRes) {
+        throw new Error('商品不存在');
+      }
       const safeProduct = {
         id: productRes._id,
         name: productRes.name || '商品名称',
@@ -76,6 +80,7 @@ const useProductDetail = productId => {
         stock: 0,
         sku: []
       });
+      console.log('✅ 商品详情数据源验证成功', safeProduct);
     } catch (err) {
       setError(err.message);
       toast({
@@ -83,6 +88,7 @@ const useProductDetail = productId => {
         description: err.message,
         variant: 'destructive'
       });
+      console.error('❌ 商品详情数据源错误:', err);
     } finally {
       setLoading(false);
     }
@@ -157,15 +163,15 @@ export default function ProductDetail(props) {
           }
         }
       });
-      // 显示成功提示
-      $w.utils.showToast({
-        title: '已添加到购物车'
+      toast({
+        title: '已添加到购物车',
+        description: '商品已成功加入购物车'
       });
     } catch (err) {
-      $w.utils.showToast({
+      toast({
         title: '添加失败',
-        content: err.message,
-        icon: 'error'
+        description: err.message,
+        variant: 'destructive'
       });
     }
   }, [productId, quantity, selectedSku]);

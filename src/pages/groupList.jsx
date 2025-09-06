@@ -48,7 +48,7 @@ const useGroupData = () => {
       const categoryData = (res.records || []).map(category => ({
         id: category._id,
         name: category.name || '分类名称',
-        icon: category.icon || ''
+        icon: category.icon || '📦'
       }));
       setCategories([{
         id: 'all',

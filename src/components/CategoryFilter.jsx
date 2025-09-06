@@ -1,14 +1,18 @@
 // @ts-ignore;
 import React from 'react';
+// @ts-ignore;
+import { Button } from '@/components/ui';
 
 export function CategoryFilter({
-  categories,
-  activeCategory,
-  onCategoryChange
+  categories = [],
+  selectedCategory,
+  onCategoryChange,
+  className = ''
 }) {
-  return <div className="flex space-x-2 px-4 py-3 overflow-x-auto">
-      {categories.map(category => <button key={category.id} onClick={() => onCategoryChange(category.id)} className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${activeCategory === category.id ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
+  return <div className={`flex gap-2 overflow-x-auto pb-2 ${className}`}>
+      {categories.map(category => <Button key={category.id} variant={selectedCategory === category.id ? 'default' : 'outline'} size="sm" className="whitespace-nowrap" onClick={() => onCategoryChange(category.id)}>
+          <span className="mr-1">{category.icon}</span>
           {category.name}
-        </button>)}
+        </Button>)}
     </div>;
 }
