@@ -41,10 +41,10 @@ const useHomeData = () => {
   const {
     toast
   } = useToast();
-
-  // 加载banner数据
   const loadBanners = useCallback(async () => {
     try {
+      setLoading(true);
+      setError(null);
       const res = await $w.cloud.callDataSource({
         dataSourceName: 'banner',
         methodName: 'wedaGetRecordsV2',
@@ -125,7 +125,7 @@ const useHomeData = () => {
       const categoryData = (res.records || []).map(category => ({
         id: category._id,
         name: category.name || '分类名称',
-        icon: category.icon || '',
+        icon: category.icon || '📦',
         sortOrder: category.sortOrder || 0
       }));
       setCategories(categoryData);

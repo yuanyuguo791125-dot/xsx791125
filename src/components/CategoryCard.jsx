@@ -1,16 +1,19 @@
 // @ts-ignore;
 import React from 'react';
+// @ts-ignore;
+import { Card } from '@/components/ui';
 
 export function CategoryCard({
-  icon: Icon,
-  title,
-  color,
-  onClick
+  name,
+  icon,
+  onClick,
+  className = ''
 }) {
-  return <button onClick={onClick} className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${color}`}>
-        <Icon size={24} className="text-white" />
+  return <Card className={`p-4 text-center cursor-pointer hover:shadow-md transition-shadow ${className}`} onClick={onClick}>
+      <div className="flex flex-col items-center gap-2">
+        {/* 修复：将emoji表情用span标签包裹 */}
+        <span className="text-2xl">{icon || '📦'}</span>
+        <span className="text-sm font-medium">{name}</span>
       </div>
-      <span className="text-sm font-medium text-gray-700">{title}</span>
-    </button>;
+    </Card>;
 }
