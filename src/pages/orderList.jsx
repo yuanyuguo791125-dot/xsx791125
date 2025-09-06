@@ -1,334 +1,292 @@
 // @ts-ignore;
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 // @ts-ignore;
-import { Card, CardContent, Button, useToast, Tabs, TabsList, TabsTrigger, Badge } from '@/components/ui';
+import { Card, CardContent, Button, useToast, Badge, Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui';
 // @ts-ignore;
-import { RefreshCw, AlertCircle, Package, Truck, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Package, Truck, Clock, CheckCircle, XCircle, ChevronRight, ShoppingBag } from 'lucide-react';
 
 // @ts-ignore;
-import { OrderCard } from '@/components/OrderCard';
+import TabBar from '@/components/TabBar';
 
-// 订单状态配置
-const ORDER_STATUS_CONFIG = {
-  all: {
-    label: '全部',
-    color: 'default',
-    icon: Package
-  },
-  pending: {
-    label: '待付款',
-    color: 'warning',
-    icon: Clock
-  },
-  paid: {
-    label: '待发货',
-    color: 'info',
-    icon: Package
-  },
-  shipped: {
-    label: '待收货',
-    color: 'primary',
-    icon: Truck
-  },
-  completed: {
-    label: '已完成',
-    color: 'success',
-    icon: CheckCircle
-  },
-  cancelled: {
-    label: '已取消',
-    color: 'destructive',
-    icon: XCircle
-  }
+// 订单卡片组件
+const OrderCard = ({
+  order,
+  onOrderClick
+}) => {
+  const getStatusInfo = status => {
+    const statusMap = {
+      '待付款': {
+        color: 'warning',
+        icon: Clock,
+        text: '待付款'
+      },
+      '待发货': {
+        color: 'info',
+        icon: Package,
+        text: '待发货'
+      },
+      '待收货': {
+        color: 'processing',
+        icon: Truck,
+        text: '待收货'
+      },
+      '已完成': {
+        color: 'success',
+        icon: CheckCircle,
+        text: '已完成'
+      },
+      '已取消': {
+        color: 'destructive',
+        icon: XCircle,
+        text: '已取消'
+      }
+    };
+    return statusMap[status] || {
+      color: 'default',
+      icon: Package,
+      text: status
+    };
+  };
+  const statusInfo = getStatusInfo(order.status);
+  return <Card className="mb-4" onClick={() => onOrderClick(order._id)}>
+      <CardContent className="p-4">
+        {/* 订单头部 */}
+        <div className="flex justify-between items-center mb-3">
+          <div>
+            <p className="text-sm font-medium">订单号: {order.orderId}</p>
+            <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleString()}</p>
+          </div>
+          <Badge variant={statusInfo.color} className="flex items-center gap-1">
+            <statusInfo.icon className="w-3 h-3" />
+            {statusInfo.text}
+          </Badge>
+        </div>
+
+        {/* 商品信息 */}
+        <div className="space-y-2 mb-3">
+          {order.items?.slice(0, 2).map((item, index) => <div key={index} className="flex items-center gap-3">
+              <img src={item.image || '/placeholder.jpg'} alt={item.name} className="w-16 h-16 rounded object-cover" />
+              <div className="flex-1">
+                <p className="text-sm font-medium line-clamp-2">{item.name}</p>
+                <p className="text-xs text-gray-500">x{item.quantity}</p>
+              </div>
+              <p className="text-sm font-medium">¥{item.price}</p>
+            </div>)}
+          {order.items?.length > 2 && <p className="text-xs text-gray-500 text-center">+{order.items.length - 2} 件商品</p>}
+        </div>
+
+        {/* 订单金额 */}
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-sm text-gray-600">共{order.items?.length || 0}件商品</span>
+          <span className="text-lg font-bold">¥{order.totalAmount}</span>
+        </div>
+
+        {/* 操作按钮 */}
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="flex-1" onClick={e => {
+          e.stopPropagation();
+          $w.utils.navigateTo({
+            pageId: 'orderDetail',
+            params: {
+              orderId: order._id
+            }
+          });
+        }}>
+            查看详情
+          </Button>
+          {order.status === '待付款' && <Button size="sm" className="flex-1" onClick={e => {
+          e.stopPropagation();
+          $w.utils.navigateTo({
+            pageId: 'payment',
+            params: {
+              orderId: order._id,
+              totalAmount: order.totalAmount
+            }
+          });
+        }}>
+              立即付款
+            </Button>}
+          {order.status === '已完成' && <Button variant="outline" size="sm" className="flex-1" onClick={e => {
+          e.stopPropagation();
+          // 再次购买逻辑
+          console.log('再次购买:', order._id);
+        }}>
+              再次购买
+            </Button>}
+        </div>
+      </CardContent>
+    </Card>;
 };
 
-// 数据加载Hook
-const useOrders = status => {
-  const [data, setData] = useState([]);
+// 空状态组件
+const EmptyOrders = ({
+  status
+}) => {
+  const statusText = {
+    'all': '订单',
+    '待付款': '待付款订单',
+    '待发货': '待发货订单',
+    '待收货': '待收货订单',
+    '已完成': '已完成订单'
+  };
+  return <div className="flex flex-col items-center justify-center py-12">
+      <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
+      <p className="text-gray-500 mb-2">暂无{statusText[status] || '订单'}</p>
+      <p className="text-sm text-gray-400 mb-4">快去选购心仪的商品吧</p>
+      <Button variant="outline" onClick={() => $w.utils.navigateTo({
+      pageId: 'home'
+    })}>
+        去购物
+      </Button>
+    </div>;
+};
+
+// 订单数据Hook
+const useOrderData = () => {
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [activeTab, setActiveTab] = useState('all');
   const {
     toast
   } = useToast();
-  const loadData = useCallback(async (isRefresh = false) => {
+  const loadOrderData = async (status = 'all') => {
     try {
       setLoading(true);
-      setError(null);
-      const currentPage = isRefresh ? 1 : page;
-      const filter = {
-        where: {
-          userId: {
-            $eq: $w.auth.currentUser?.userId || 'demo_user'
-          }
+      const userId = $w.auth.currentUser?.userId || 'guest';
+
+      // 构建查询条件
+      let filter = {
+        user_id: {
+          $eq: userId
         }
       };
-
-      // 状态筛选
       if (status !== 'all') {
-        filter.where.status = {
+        filter.status = {
           $eq: status
         };
       }
-      const res = await $w.cloud.callDataSource({
+
+      // 从数据源获取订单数据
+      const orderRes = await $w.cloud.callDataSource({
         dataSourceName: 'order',
         methodName: 'wedaGetRecordsV2',
         params: {
-          filter,
-          select: {
-            $master: true
+          filter: {
+            where: filter
           },
           orderBy: [{
             createdAt: 'desc'
           }],
-          pageNumber: currentPage,
-          pageSize: 10,
-          getCount: true
+          select: {
+            $master: true
+          }
         }
       });
-
-      // 安全处理返回数据
-      const orders = (res.records || []).map(order => ({
-        _id: order._id,
-        orderNo: order.orderNo || `ORDER-${Date.now()}`,
-        status: order.status || 'pending',
-        createdAt: order.createdAt || new Date().toISOString(),
-        totalAmount: order.totalAmount || 0,
-        items: Array.isArray(order.items) ? order.items.map(item => ({
-          name: item.name || '商品名称',
-          image: item.image || '',
-          quantity: item.quantity || 1,
-          price: item.price || 0
-        })) : []
-      }));
-      if (isRefresh) {
-        setData(orders);
-      } else {
-        setData(prev => [...prev, ...orders]);
-      }
-      setTotal(res.total || 0);
-      setHasMore(orders.length === 10 && currentPage * 10 < res.total);
-      setPage(currentPage + 1);
-    } catch (err) {
-      setError(err.message);
+      setOrders(orderRes.records || []);
+    } catch (error) {
       toast({
         title: '加载失败',
-        description: err.message,
+        description: error.message,
         variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
-  }, [page, status]);
-  const refresh = useCallback(() => {
-    setPage(1);
-    setHasMore(true);
-    loadData(true);
-  }, [loadData]);
-  const loadMore = useCallback(() => {
-    if (!loading && hasMore) {
-      loadData();
-    }
-  }, [loading, hasMore, loadData]);
+  };
   return {
-    data,
+    orders,
     loading,
-    error,
-    hasMore,
-    total,
-    refresh,
-    loadMore
+    activeTab,
+    setActiveTab,
+    loadOrderData
   };
 };
 
-// 骨架屏组件
-const OrderListSkeleton = () => <div className="space-y-4 p-4">
-    {[...Array(3)].map((_, i) => <Card key={i} className="animate-pulse">
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start mb-3">
-            <div className="h-4 bg-gray-200 rounded w-32" />
-            <div className="h-6 bg-gray-200 rounded w-20" />
-          </div>
-          <div className="flex gap-3 mb-3">
-            <div className="w-20 h-20 bg-gray-200 rounded" />
-            <div className="flex-1 space-y-2">
-              <div className="h-4 bg-gray-200 rounded" />
-              <div className="h-3 bg-gray-200 rounded w-3/4" />
-              <div className="h-3 bg-gray-200 rounded w-1/2" />
-            </div>
-          </div>
-          <div className="flex justify-between items-center">
-            <div className="h-4 bg-gray-200 rounded w-24" />
-            <div className="flex gap-2">
-              <div className="h-8 bg-gray-200 rounded w-20" />
-              <div className="h-8 bg-gray-200 rounded w-20" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>)}
-  </div>;
-
-// 错误状态组件
-const ErrorState = ({
-  message,
-  onRetry
-}) => <div className="flex flex-col items-center justify-center py-12">
-    <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-    <p className="text-gray-500 mb-4">{message}</p>
-    <Button variant="outline" onClick={onRetry}>
-      <RefreshCw className="w-4 h-4 mr-2" />
-      重新加载
-    </Button>
-  </div>;
-
-// 空状态组件
-const EmptyState = ({
-  title,
-  description
-}) => <div className="text-center py-12">
-    <Package className="w-12 h-12 text-gray-400 mb-4" />
-    <p className="text-gray-500">{title}</p>
-    <p className="text-sm text-gray-400 mt-2">{description}</p>
-  </div>;
-
-// 统计卡片
-const StatsCard = ({
-  title,
-  value,
-  icon: Icon,
-  color
-}) => <Card className="flex-1">
-    <CardContent className="p-4 flex items-center gap-3">
-      <div className={`p-2 rounded-lg ${color}`}>
-        <Icon className="w-5 h-5 text-white" />
-      </div>
-      <div>
-        <p className="text-sm text-gray-600">{title}</p>
-        <p className="text-lg font-bold">{value}</p>
-      </div>
-    </CardContent>
-  </Card>;
+// 订单状态标签
+const OrderStatusTabs = ({
+  activeTab,
+  onTabChange
+}) => {
+  const tabs = [{
+    key: 'all',
+    label: '全部'
+  }, {
+    key: '待付款',
+    label: '待付款'
+  }, {
+    key: '待发货',
+    label: '待发货'
+  }, {
+    key: '待收货',
+    label: '待收货'
+  }, {
+    key: '已完成',
+    label: '已完成'
+  }];
+  return <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
+      <TabsList className="w-full grid grid-cols-5">
+        {tabs.map(tab => <TabsTrigger key={tab.key} value={tab.key} className="text-sm">
+            {tab.label}
+          </TabsTrigger>)}
+      </TabsList>
+    </Tabs>;
+};
 export default function OrderList(props) {
   const {
     $w
   } = props;
   const [activeTab, setActiveTab] = useState('all');
-  const [refreshing, setRefreshing] = useState(false);
-
-  // 使用自定义Hook加载订单数据
-  const orders = useOrders(activeTab);
-
-  // 下拉刷新
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await orders.refresh();
-    setRefreshing(false);
-  }, [orders]);
-
-  // 无限滚动
-  const observerRef = useRef();
-  const lastOrderRef = useCallback(node => {
-    if (orders.loading) return;
-    if (observerRef.current) observerRef.current.disconnect();
-    observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && orders.hasMore) {
-        orders.loadMore();
+  const {
+    orders,
+    loading,
+    activeTab: currentTab,
+    setActiveTab: setOrderActiveTab,
+    loadOrderData
+  } = useOrderData();
+  useEffect(() => {
+    loadOrderData(activeTab === 'all' ? 'all' : activeTab);
+  }, [activeTab, loadOrderData]);
+  const handleOrderClick = orderId => {
+    $w.utils.navigateTo({
+      pageId: 'orderDetail',
+      params: {
+        orderId
       }
     });
-    if (node) observerRef.current.observe(node);
-  }, [orders.loading, orders.hasMore, orders.loadMore]);
-
-  // 页面加载
-  useEffect(() => {
-    handleRefresh();
-  }, [activeTab]);
-
-  // 渲染订单列表
-  const renderOrders = () => {
-    if (orders.loading && orders.data.length === 0) {
-      return <OrderListSkeleton />;
-    }
-    if (orders.error) {
-      return <ErrorState message={orders.error} onRetry={orders.refresh} />;
-    }
-    if (orders.data.length === 0) {
-      const statusText = ORDER_STATUS_CONFIG[activeTab]?.label || '订单';
-      return <EmptyState title={`暂无${statusText}`} description="购物后订单将显示在这里" />;
-    }
-    return <div className="space-y-4">
-        {orders.data.map((order, index) => <OrderCard key={order._id} order={order} onClick={() => $w.utils.navigateTo({
-        pageId: 'orderDetail',
-        params: {
-          orderId: order._id
-        }
-      })} ref={index === orders.data.length - 1 ? lastOrderRef : null} />)}
-      </div>;
   };
-
-  // 渲染统计信息
-  const renderStats = () => {
-    const stats = [{
-      title: '全部订单',
-      value: orders.total,
-      icon: Package,
-      color: 'bg-blue-500'
-    }, {
-      title: '待付款',
-      value: orders.data.filter(o => o.status === 'pending').length,
-      icon: Clock,
-      color: 'bg-orange-500'
-    }, {
-      title: '待收货',
-      value: orders.data.filter(o => o.status === 'shipped').length,
-      icon: Truck,
-      color: 'bg-green-500'
-    }, {
-      title: '已完成',
-      value: orders.data.filter(o => o.status === 'completed').length,
-      icon: CheckCircle,
-      color: 'bg-purple-500'
-    }];
-    return <div className="flex gap-4 p-4">
-        {stats.map(stat => <StatsCard key={stat.title} {...stat} />)}
+  const filteredOrders = activeTab === 'all' ? orders : orders.filter(order => order.status === activeTab);
+  if (loading) {
+    return <div className="min-h-screen bg-gray-50">
+        <div className="bg-white p-4 border-b">
+          <h1 className="text-lg font-bold text-center">我的订单</h1>
+        </div>
+        <div className="p-4">
+          <div className="animate-pulse">
+            <div className="h-12 bg-gray-200 rounded mb-4" />
+            {[...Array(3)].map((_, i) => <div key={i} className="h-32 bg-gray-200 rounded mb-4" />)}
+          </div>
+        </div>
       </div>;
-  };
-  return <div className="min-h-screen bg-gray-50">
-      {/* 下拉刷新指示器 */}
-      {refreshing && <div className="fixed top-0 left-0 right-0 z-50 bg-blue-500 text-white text-center py-2">
-          正在刷新...
-        </div>}
+  }
+  return <div className="min-h-screen bg-gray-50 pb-20">
+      {/* 头部 */}
+      <div className="bg-white p-4 border-b">
+        <h1 className="text-lg font-bold text-center">我的订单</h1>
+      </div>
 
-      {/* 统计信息 */}
-      {renderStats()}
-
-      {/* 状态筛选 */}
-      <div className="bg-white shadow-sm">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5">
-            {Object.entries(ORDER_STATUS_CONFIG).map(([key, config]) => <TabsTrigger key={key} value={key} className="text-sm">
-                {config.label}
-              </TabsTrigger>)}
-          </TabsList>
-        </Tabs>
+      {/* 状态标签 */}
+      <div className="bg-white border-b">
+        <OrderStatusTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
       {/* 订单列表 */}
       <div className="p-4">
-        {renderOrders()}
-
-        {/* 加载更多 */}
-        {orders.hasMore && !orders.loading && <div className="text-center py-4">
-            <Button variant="outline" onClick={orders.loadMore}>
-              加载更多
-            </Button>
-          </div>}
-
-        {/* 底部提示 */}
-        {!orders.hasMore && orders.data.length > 0 && <div className="text-center py-4">
-            <p className="text-sm text-gray-500">已加载全部订单</p>
+        {filteredOrders.length === 0 ? <EmptyOrders status={activeTab} /> : <div className="space-y-4">
+            {filteredOrders.map(order => <OrderCard key={order._id} order={order} onOrderClick={handleOrderClick} />)}
           </div>}
       </div>
+
+      {/* 底部导航 */}
+      <TabBar activeTab="order" onTabChange={() => {}} />
     </div>;
 }

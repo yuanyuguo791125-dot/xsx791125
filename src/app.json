@@ -1,19 +1,21 @@
 
 {
   "pages": [
-    "pages/home",
-    "pages/productDetail",
-    "pages/cart",
-    "pages/groupList",
-    "pages/orderList",
-    "pages/orderDetail",
-    "pages/payment",
-    "pages/profile"
+    "pages/home/home",
+    "pages/productDetail/productDetail",
+    "pages/cart/cart",
+    "pages/groupList/groupList",
+    "pages/orderList/orderList",
+    "pages/orderDetail/orderDetail",
+    "pages/payment/payment",
+    "pages/profile/profile",
+    "pages/admin/dashboard/dashboard",
+    "pages/admin/productList/productList"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#ffffff",
-    "navigationBarTitleText": "电商小程序",
+    "navigationBarTitleText": "学习用品商城",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
@@ -23,25 +25,25 @@
     "backgroundColor": "#ffffff",
     "list": [
       {
-        "pagePath": "pages/home",
+        "pagePath": "pages/home/home",
         "text": "首页",
         "iconPath": "images/tab-home.png",
         "selectedIconPath": "images/tab-home-active.png"
       },
       {
-        "pagePath": "pages/groupList",
+        "pagePath": "pages/groupList/groupList",
         "text": "拼团",
         "iconPath": "images/tab-group.png",
         "selectedIconPath": "images/tab-group-active.png"
       },
       {
-        "pagePath": "pages/cart",
+        "pagePath": "pages/cart/cart",
         "text": "购物车",
         "iconPath": "images/tab-cart.png",
         "selectedIconPath": "images/tab-cart-active.png"
       },
       {
-        "pagePath": "pages/profile",
+        "pagePath": "pages/profile/profile",
         "text": "我的",
         "iconPath": "images/tab-profile.png",
         "selectedIconPath": "images/tab-profile-active.png"
