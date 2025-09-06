@@ -11,55 +11,135 @@ export const LazyImage = memo(({
 }) => {
   const [imageSrc, setImageSrc] = useState(placeholder);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const imgRef = useRef(null);
   const observerRef = useRef(null);
-  useEffect(() => {
-    if (!src) {
+  const abortControllerRef = useRef(null);
+
+  // 验证图片URL
+  const validateUrl = url => {
+    if (!url) return false;
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  // 清理函数
+  const cleanup = () => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  };
+
+  // 加载图片
+  const loadImage = async imageUrl => {
+    if (!validateUrl(imageUrl)) {
       setImageSrc(errorPlaceholder);
       setIsLoading(false);
+      setHasError(true);
       return;
     }
-    const img = new Image();
-    img.onload = () => {
-      setImageSrc(src);
-      setIsLoading(false);
-    };
-    img.onerror = () => {
+    try {
+      setIsLoading(true);
+      setHasError(false);
+
+      // 创建新的 AbortController
+      cleanup();
+      abortControllerRef.current = new AbortController();
+
+      // 使用 Image 对象预加载
+      const img = new Image();
+      return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          reject(new Error('Image load timeout'));
+        }, 10000); // 10秒超时
+
+        img.onload = () => {
+          clearTimeout(timeoutId);
+          if (!abortControllerRef.current?.signal.aborted) {
+            setImageSrc(imageUrl);
+            setIsLoading(false);
+            setHasError(false);
+            resolve();
+          }
+        };
+        img.onerror = () => {
+          clearTimeout(timeoutId);
+          if (!abortControllerRef.current?.signal.aborted) {
+            setImageSrc(errorPlaceholder);
+            setIsLoading(false);
+            setHasError(true);
+            reject(new Error('Image load error'));
+          }
+        };
+        img.src = imageUrl;
+      });
+    } catch (error) {
+      console.error('Image loading failed:', error);
+      if (!abortControllerRef.current?.signal.aborted) {
+        setImageSrc(errorPlaceholder);
+        setIsLoading(false);
+        setHasError(true);
+      }
+    }
+  };
+
+  // 初始加载
+  useEffect(() => {
+    if (src) {
+      loadImage(src);
+    } else {
       setImageSrc(errorPlaceholder);
       setIsLoading(false);
-    };
-    img.src = src;
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [src, errorPlaceholder]);
+      setHasError(true);
+    }
+    return cleanup;
+  }, [src]);
+
+  // 懒加载实现
   useEffect(() => {
     if (!imgRef.current || !src) return;
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const img = new Image();
-          img.onload = () => {
-            setImageSrc(src);
-            setIsLoading(false);
-          };
-          img.onerror = () => {
-            setImageSrc(errorPlaceholder);
-            setIsLoading(false);
-          };
-          img.src = src;
+          loadImage(src);
           observer.disconnect();
         }
       });
     }, {
-      rootMargin: '50px'
+      rootMargin: '50px',
+      threshold: 0.1
     });
     observer.observe(imgRef.current);
-    return () => observer.disconnect();
-  }, [src, errorPlaceholder]);
+    observerRef.current = observer;
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [src]);
   return <div className="relative">
       {isLoading && <div className="absolute inset-0 bg-gray-100 animate-pulse rounded" />}
-      <img ref={imgRef} src={imageSrc} alt={alt} className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`} {...props} />
+      <img ref={imgRef} src={imageSrc} alt={alt || '商品图片'} className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`} loading="lazy" onError={() => {
+      if (!hasError) {
+        setImageSrc(errorPlaceholder);
+        setIsLoading(false);
+        setHasError(true);
+      }
+    }} {...props} />
+      {hasError && <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded">
+          <span className="text-xs text-gray-500">图片加载失败</span>
+        </div>}
     </div>;
 });
+
+// 添加 displayName 用于调试
+LazyImage.displayName = 'LazyImage';

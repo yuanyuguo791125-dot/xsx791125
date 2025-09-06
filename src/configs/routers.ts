@@ -6,6 +6,8 @@ import CART from '../pages/cart.jsx';
 import ORDERLIST from '../pages/orderList.jsx';
 import ORDERDETAIL from '../pages/orderDetail.jsx';
 import PAYMENT from '../pages/payment.jsx';
+import ADMIN/DASHBOARD from '../pages/admin/dashboard.jsx';
+import ADMIN/PRODUCTLIST from '../pages/admin/productList.jsx';
 export const routers = [{
   id: "home",
   component: HOME
@@ -30,4 +32,10 @@ export const routers = [{
 }, {
   id: "payment",
   component: PAYMENT
+}, {
+  id: "admin/dashboard",
+  component: ADMIN/DASHBOARD
+}, {
+  id: "admin/productList",
+  component: ADMIN/PRODUCTLIST
 }]
