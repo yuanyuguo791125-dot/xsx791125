@@ -1,47 +1,31 @@
 // @ts-ignore;
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // @ts-ignore;
-import { Card, CardContent, Button, Checkbox, useToast } from '@/components/ui';
+import { Card, CardContent, Button, useToast, Badge } from '@/components/ui';
 // @ts-ignore;
-import { ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, RefreshCw, AlertCircle } from 'lucide-react';
 
 // @ts-ignore;
-import { LazyImage } from '@/components/LazyImage';
-// @ts-ignore;
-import { SkeletonLoader } from '@/components/SkeletonLoader';
-// @ts-ignore;
-import { VirtualizedList } from '@/components/VirtualizedList';
-// @ts-ignore;
-import { CartItemCard } from '@/components/CartItemCard';
-// @ts-ignore;
-import { EmptyCart } from '@/components/EmptyCart';
+import { CartItem } from '@/components/CartItem';
 // @ts-ignore;
 import { CartSummary } from '@/components/CartSummary';
-export default function Cart(props) {
-  const {
-    $w
-  } = props;
+// @ts-ignore;
+import { EmptyCart } from '@/components/EmptyCart';
+
+// 数据加载Hook
+const useCartData = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
-  const [updating, setUpdating] = useState(false);
   const {
     toast
   } = useToast();
-
-  // 防抖处理
-  const debounce = (func, delay) => {
-    let timeoutId;
-    return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func.apply(this, args), delay);
-    };
-  };
-  const fetchCart = useCallback(async () => {
+  const loadCartData = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await $w.cloud.callDataSource({
+      setError(null);
+      const res = await $w.cloud.callDataSource({
         dataSourceName: 'shopping_cart',
         methodName: 'wedaGetRecordsV2',
         params: {
@@ -52,64 +36,63 @@ export default function Cart(props) {
               }
             }
           },
-          orderBy: [{
-            createdAt: 'desc'
-          }],
           select: {
             $master: true
-          }
+          },
+          orderBy: [{
+            createdAt: 'desc'
+          }]
         }
       });
-      setCartItems(result.records || []);
-    } catch (error) {
+
+      // 安全处理购物车数据
+      const cartData = (res.records || []).map(item => ({
+        id: item._id,
+        productId: item.productId,
+        quantity: item.quantity || 1,
+        sku: item.sku || {},
+        createdAt: item.createdAt
+      }));
+      setCartItems(cartData);
+    } catch (err) {
+      setError(err.message);
       toast({
-        title: "获取购物车失败",
-        description: error.message,
-        variant: "destructive"
+        title: '购物车加载失败',
+        description: err.message,
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
-  }, []);
-  useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
-
-  // 更新购物车商品
-  const updateCartItem = useCallback(async (itemId, updates) => {
+  }, [toast]);
+  const updateQuantity = useCallback(async (cartId, newQuantity) => {
     try {
-      setUpdating(true);
       await $w.cloud.callDataSource({
         dataSourceName: 'shopping_cart',
         methodName: 'wedaUpdateV2',
         params: {
-          data: updates,
+          data: {
+            quantity: newQuantity
+          },
           filter: {
             where: {
               _id: {
-                $eq: itemId
+                $eq: cartId
               }
             }
           }
         }
       });
-      setCartItems(prev => prev.map(item => item._id === itemId ? {
-        ...item,
-        ...updates
-      } : item));
-    } catch (error) {
+      await loadCartData();
+    } catch (err) {
       toast({
-        title: "更新失败",
-        description: error.message,
-        variant: "destructive"
+        title: '更新失败',
+        description: err.message,
+        variant: 'destructive'
       });
-    } finally {
-      setUpdating(false);
     }
-  }, []);
-
-  // 删除购物车商品
-  const removeCartItem = useCallback(async itemId => {
+  }, [loadCartData, toast]);
+  const removeItem = useCallback(async cartId => {
     try {
       await $w.cloud.callDataSource({
         dataSourceName: 'shopping_cart',
@@ -118,141 +101,123 @@ export default function Cart(props) {
           filter: {
             where: {
               _id: {
-                $eq: itemId
+                $eq: cartId
               }
             }
           }
         }
       });
-      setCartItems(prev => prev.filter(item => item._id !== itemId));
-      setSelectedItems(prev => prev.filter(id => id !== itemId));
+      await loadCartData();
       toast({
-        title: "删除成功",
-        description: "商品已从购物车移除"
+        title: '已移除商品'
       });
-    } catch (error) {
+    } catch (err) {
       toast({
-        title: "删除失败",
-        description: error.message,
-        variant: "destructive"
+        title: '移除失败',
+        description: err.message,
+        variant: 'destructive'
       });
     }
-  }, []);
+  }, [loadCartData, toast]);
+  return {
+    cartItems,
+    loading,
+    error,
+    selectedItems,
+    setSelectedItems,
+    loadCartData,
+    updateQuantity,
+    removeItem
+  };
+};
 
-  // 批量删除
-  const handleBatchDelete = useCallback(async () => {
-    if (selectedItems.length === 0) return;
-    try {
-      await $w.cloud.callDataSource({
-        dataSourceName: 'shopping_cart',
-        methodName: 'wedaBatchDeleteV2',
-        params: {
-          filter: {
-            where: {
-              _id: {
-                $in: selectedItems
-              }
-            }
-          }
-        }
-      });
-      setCartItems(prev => prev.filter(item => !selectedItems.includes(item._id)));
-      setSelectedItems([]);
-      setSelectAll(false);
-      toast({
-        title: "批量删除成功",
-        description: `已删除 ${selectedItems.length} 件商品`
-      });
-    } catch (error) {
-      toast({
-        title: "批量删除失败",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  }, [selectedItems]);
-
-  // 选择/取消选择商品
-  const handleSelectItem = useCallback((itemId, checked) => {
-    setSelectedItems(prev => checked ? [...prev, itemId] : prev.filter(id => id !== itemId));
-  }, []);
-
-  // 全选/取消全选
-  const handleSelectAll = useCallback(checked => {
-    setSelectAll(checked);
-    setSelectedItems(checked ? cartItems.map(item => item._id) : []);
-  }, [cartItems]);
-
-  // 防抖计算总金额
-  const debouncedTotalAmount = useMemo(() => {
-    const selectedItemsData = cartItems.filter(item => selectedItems.includes(item._id));
-    return selectedItemsData.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }, [cartItems, selectedItems]);
-
-  // 去结算
-  const handleCheckout = useCallback(() => {
-    if (selectedItems.length === 0) {
-      toast({
-        title: "请选择商品",
-        description: "请先选择要结算的商品",
-        variant: "destructive"
-      });
-      return;
-    }
-    const selectedItemsData = cartItems.filter(item => selectedItems.includes(item._id));
-    $w.utils.navigateTo({
-      pageId: 'orderConfirm',
-      params: {
-        items: JSON.stringify(selectedItemsData),
-        totalAmount: debouncedTotalAmount
-      }
-    });
-  }, [selectedItems, cartItems, debouncedTotalAmount]);
-
-  // 返回购物
-  const handleNavigateToHome = useCallback(() => {
-    $w.utils.navigateTo({
-      pageId: 'home'
-    });
-  }, []);
-  if (loading) {
-    return <div className="min-h-screen bg-gray-50 p-4">
-        <SkeletonLoader type="cart" count={3} />
-      </div>;
-  }
-  if (cartItems.length === 0) {
-    return <div className="min-h-screen bg-gray-50">
-        <EmptyCart onNavigate={handleNavigateToHome} />
-      </div>;
-  }
-  return <div className="min-h-screen bg-gray-50">
-      <div className="p-4 pb-32">
-        {/* 顶部操作栏 */}
-        <Card className="mb-4">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Checkbox checked={selectAll} onCheckedChange={handleSelectAll} />
-              <span className="text-sm font-medium">全选</span>
+// 骨架屏组件
+const CartSkeleton = () => <div className="space-y-4 p-4">
+    {[...Array(3)].map((_, i) => <Card key={i} className="animate-pulse">
+        <CardContent className="p-4">
+          <div className="flex gap-3">
+            <div className="w-20 h-20 bg-gray-200 rounded" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-gray-200 rounded" />
+              <div className="h-3 bg-gray-200 rounded w-3/4" />
+              <div className="flex justify-between items-center">
+                <div className="h-4 bg-gray-200 rounded w-16" />
+                <div className="flex gap-2">
+                  <div className="w-8 h-8 bg-gray-200 rounded" />
+                  <div className="w-8 h-8 bg-gray-200 rounded" />
+                  <div className="w-8 h-8 bg-gray-200 rounded" />
+                </div>
+              </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleBatchDelete} disabled={selectedItems.length === 0} className="text-red-600">
-              <Trash2 className="w-4 h-4 mr-1" />
-              批量删除
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>)}
+  </div>;
 
-        {/* 购物车商品列表 */}
-        <VirtualizedList items={cartItems} renderItem={item => <CartItemCard item={item} onUpdate={updateCartItem} onRemove={removeCartItem} onSelect={handleSelectItem} isSelected={selectedItems.includes(item._id)} />} itemHeight={140} className="h-[calc(100vh-300px)]" />
+// 错误状态组件
+const ErrorState = ({
+  message,
+  onRetry
+}) => <div className="flex flex-col items-center justify-center py-12">
+    <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+    <p className="text-gray-500 mb-4">{message}</p>
+    <Button variant="outline" onClick={onRetry}>
+      <RefreshCw className="w-4 h-4 mr-2" />
+      重新加载
+    </Button>
+  </div>;
+export default function Cart(props) {
+  const {
+    $w
+  } = props;
+  const {
+    cartItems,
+    loading,
+    error,
+    selectedItems,
+    setSelectedItems,
+    loadCartData,
+    updateQuantity,
+    removeItem
+  } = useCartData();
 
-        {/* 加载状态 */}
-        {updating && <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-            <div className="bg-white p-4 rounded-lg">
-              <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          </div>}
+  // 页面加载
+  useEffect(() => {
+    loadCartData();
+  }, [loadCartData]);
+
+  // 计算选中商品总价
+  const totalPrice = cartItems.filter(item => selectedItems.includes(item.id)).reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0);
+
+  // 渲染购物车内容
+  const renderCartContent = () => {
+    if (loading) {
+      return <CartSkeleton />;
+    }
+    if (error) {
+      return <ErrorState message={error} onRetry={loadCartData} />;
+    }
+    if (cartItems.length === 0) {
+      return <EmptyCart onShopNow={() => $w.utils.navigateTo({
+        pageId: 'home'
+      })} />;
+    }
+    return <div className="space-y-4">
+        {cartItems.map(item => <CartItem key={item.id} item={item} selected={selectedItems.includes(item.id)} onSelect={() => {
+        const newSelected = selectedItems.includes(item.id) ? selectedItems.filter(id => id !== item.id) : [...selectedItems, item.id];
+        setSelectedItems(newSelected);
+      }} onQuantityChange={newQuantity => updateQuantity(item.id, newQuantity)} onRemove={() => removeItem(item.id)} />)}
+      </div>;
+  };
+  return <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="p-4">
+        {renderCartContent()}
       </div>
-
-      {/* 结算栏 */}
-      <CartSummary items={cartItems} selectedItems={selectedItems} onCheckout={handleCheckout} onBatchDelete={handleBatchDelete} />
+      {cartItems.length > 0 && <CartSummary totalPrice={totalPrice} selectedCount={selectedItems.length} onCheckout={() => $w.utils.navigateTo({
+      pageId: 'payment',
+      params: {
+        cartItems: cartItems.filter(item => selectedItems.includes(item.id))
+      }
+    })} />}
     </div>;
 }
